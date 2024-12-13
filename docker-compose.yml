@@ -5,10 +5,10 @@ services:
     build: ./temporal-fronted
     ports:
       - "3002:3002"
-    environment:
-      BACKEND_URL: http://localhost:4002
     depends_on:
       - backend
+    env_file:
+      - ./temporal-backend/.env
     networks:
       - app-network
 
@@ -20,6 +20,8 @@ services:
       - db
     env_file:
       - ./temporal-backend/.env
+    networks:
+      - app-network
 
   db:
     image: mysql:8.0
@@ -31,6 +33,11 @@ services:
     volumes:
       - db-data:/var/lib/mysql
       - ./data/script.sql:/docker-entrypoint-initdb.d/script.sql
+    networks:
+      - app-network
 
 volumes:
   db-data:
+
+networks:
+  app-network:
