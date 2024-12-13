@@ -2,6 +2,10 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/layout/NavBar";
 import Footer from "./components/layout/Footer";
+import React from "react";
+import { UserProvider } from '@auth0/nextjs-auth0/client';
+import { User } from "lucide-react";
+
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400"],
@@ -17,9 +21,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="es">
       <body className={`min-w-full ${poppins.className}`}>
-        <NavBar />
-        {children}
-        <Footer />
+        <UserProvider>
+          <NavBar />
+          {children}
+          <Footer />
+        </UserProvider>
       </body>
     </html>
   );

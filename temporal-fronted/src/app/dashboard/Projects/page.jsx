@@ -220,7 +220,7 @@ const Proyectos = () => {
     const newFileNames = [];
     const newPreviews = [];
     const newSelectedFiles = [];
-
+  
     const invalidFiles = files.filter(
       (file) => !file.type.startsWith("image/")
     );
@@ -229,21 +229,20 @@ const Proyectos = () => {
       event.target.value = "";
       return;
     }
-
+  
     setError(""); // Limpiar error si todo es válido
-
+  
     if (files.length === 0) {
       setEditingProject((prev) => ({
         ...prev,
         imagenes: [...originalImagenes, defaultImagePath],
         core_image: defaultImagePath,
       }));
-      //setBodyImagenes((prev) => [...prev, defaultImagePath]);
       setImagePreviews((prev) => [...prev, defaultImagePath]);
       setCoreImagePreviews((prev) => [...prev, defaultImagePath]);
       return;
     }
-
+  
     // Filtrar imágenes que ya existan
     const newImages = files.filter(
       (file) =>
@@ -251,32 +250,51 @@ const Proyectos = () => {
           (existingImage) => existingImage.url === `/Images/${file.name}`
         )
     );
-
+  
     if (newImages.length === 0) {
       return; // Si no hay imágenes nuevas, no hacer nada
     }
-
+  
     // Procesar imágenes nuevas
     const promises = newImages.map(async (file) => {
       let baseName = file.name.replace(/ /g, "_");
       let filePath = `/Images/${baseName}`;
       let count = 1;
       let newBaseName = baseName;
-
-      const imageUrl = URL.createObjectURL(file);
-
+  
       while (await fileExists(filePath)) {
         const nameParts = baseName.split(".");
         const extension = nameParts.pop();
         newBaseName = `${nameParts.join(".")}(${count++}).${extension}`;
         filePath = `/Images/${newBaseName}`;
       }
-
+  
       newFileNames.push(filePath);
-      newPreviews.push(imageUrl);
-      newSelectedFiles.push(new File([file], newBaseName));
+      newPreviews.push(URL.createObjectURL(file));  // Previsualización con URL.createObjectURL
+      newSelectedFiles.push(file);  // Archivos reales para la subida
+  
+      // Aquí podrías hacer la subida al servidor con el archivo real
+      // Ejemplo con FormData y fetch:
+      const formData = new FormData();
+      formData.append("image", file, newBaseName);
+  
+      // Subida al servidor
+      try {
+        const response = await fetch("/upload-endpoint", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await response.json();
+        if (data.success) {
+          console.log("Archivo subido correctamente");
+        } else {
+          console.error("Error en la subida");
+        }
+      } catch (error) {
+        console.error("Error al subir el archivo", error);
+      }
     });
-
+  
     Promise.all(promises).then(() => {
       setEditingProject((prev) => ({
         ...prev,
@@ -286,12 +304,12 @@ const Proyectos = () => {
         ],
         core_image: newFileNames[0] || defaultImagePath,
       }));
-
+  
       setImagePreviews((prev) => [...prev, ...newPreviews]);
       setCoreImagePreviews((prev) => [...prev, ...newFileNames]);
       setBodyImagenes((prev) => [...prev, ...newFileNames]);
       setSelectedFiles(newSelectedFiles);
-
+  
       setpreviewImagenes((prev) => {
         const newState = [...prev];
         newState.push([newFileNames, newPreviews]);
@@ -301,7 +319,7 @@ const Proyectos = () => {
         setCoreImagePreviews([defaultImagePath]);
         setImagePreviews([defaultImagePath]);
       } else {
-        //Si defautlImagePath esta en setCoreImagePreviews, se elimina
+        // Si defaultImagePath está en setCoreImagePreviews, se elimina
         setCoreImagePreviews((prev) =>
           prev.filter((preview) => preview !== defaultImagePath)
         );
@@ -311,6 +329,7 @@ const Proyectos = () => {
       }
     });
   };
+  
 
   //Funcion que verifica si un archivo (imagen) existe
   const fileExists = async (filePath) => {
@@ -443,7 +462,7 @@ const Proyectos = () => {
     for (const imageUrl of imagesToDelete) {
       const imageNameToDelete = imageUrl.split("/").pop();
       const encodedImageName = encodeURIComponent(imageNameToDelete);
-
+      console.log("Imagen a eliminar en syubmi:", imageUrl);
       try {
         const response = await fetch(
           `/api/upload?filename=${encodedImageName}`,
@@ -555,6 +574,10 @@ const Proyectos = () => {
   //Funcion que maneja la eliminacion de un proyecto
   const handleDeleteProyecto = async (id) => {
     try {
+      // Elimina las imágenes del servidor
+
+
+      //Elimina el proyecto de la base de datos
       const response = await fetch(`${apiUrl}/api/proyectos/${id}`, {
         method: "DELETE",
       });

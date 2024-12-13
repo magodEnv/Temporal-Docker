@@ -36,6 +36,17 @@ export default function Page() {
   const [showAlert, setShowAlert] = useState(false);
   const [message, setMessage] = useState(["", ""]);
 
+
+  useEffect(() => {
+    // Si la imagen está configurada como la imagen predeterminada, mostrarla
+    if (imagenDefault) {
+      setPreviewPhoto(defaultImagePath);  // Mostramos la imagen predeterminada en la previsualización
+      setImagenDefault(true);
+     
+    }
+    console.log("Imagen default: ", defaultImagePath);
+  }, [imagenDefault]);
+  
   useEffect(() => {
     fetchLandingInfo();
     fetchProjects();
@@ -111,12 +122,7 @@ export default function Page() {
     }
   };
   
-  useEffect(() => {
-    // Si la imagen está configurada como la imagen predeterminada, mostrarla
-    if (imagenDefault) {
-      setPreviewPhoto(defaultImagePath);  // Mostramos la imagen predeterminada en la previsualización
-    }
-  }, [imagenDefault]);
+
 
 
   /*useEffect(() => {
@@ -157,7 +163,7 @@ export default function Page() {
       if(imagenDefault){//true
         newEditingText.imagen = defaultImagePath;
         deletePreviousImage();
-        setPreviewPhoto(null);
+        //setPreviewPhoto(null);
       } else {
         //console.log("Imagen sleeccionada: ", editingText.imagen);
         newEditingText.imagen = editingText.imagen;
@@ -249,6 +255,9 @@ export default function Page() {
     setImagen(filePath); // Url de la imagen
     setPreviewPhoto(imageUrl); // URL blob de la imagen
     setEditingText({ ...editingText, imagen: filePath });
+
+    event.target.value = "";
+
     handleSubmitImage(file);
     /*let newEditingText = { ...editingText };
     newEditingText.imagen = filePath;

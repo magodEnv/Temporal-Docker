@@ -8,6 +8,8 @@ import { BsPeopleFill } from "react-icons/bs";
 import { MdArticle } from "react-icons/md";
 import { MdOutlineLogin } from "react-icons/md";
 import { AiFillHome } from "react-icons/ai";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { useRouter } from 'next/navigation';
 
 const sections = [
   { href: "/dashboard", label: "Main", icon: AiFillHome },
@@ -20,10 +22,19 @@ const sections = [
   },
 ];
 
-const logout = { href: "/", label: "Log out", icon: MdOutlineLogin };
+const logout = { href: "#", label: "Log out", icon: MdOutlineLogin };
 
 const SideBarAdmin = () => {
   const [open, setOpen] = useState(false);
+  const { user, error, isLoading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Redirige a login si no hay usuario autenticado
+    if (!isLoading && !user) {
+      router.push('/api/auth/login');
+    }
+  }, [user, isLoading, router]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -42,6 +53,12 @@ const SideBarAdmin = () => {
 
   const handleOpen = () => {
     setOpen(!open);
+  };
+
+  const handleLogout = () => {
+    console.log('logout');
+    window.location.href = "/api/auth/logout";
+    localStorage.removeItem('redirectedToDashboard');
   };
 
   return (
@@ -74,7 +91,7 @@ const SideBarAdmin = () => {
               <Section section={section} open={open} key={index} />
             ))}
           </div>
-          <div>
+          <div onClick={handleLogout}>
             <Section section={logout} open={open} />
           </div>
         </div>

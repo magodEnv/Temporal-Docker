@@ -11,8 +11,21 @@ import ProjectsHome from "./components/Card/HomeMainCard";
 import ResearcherContainer from "./components/Card/ResearcherContainer";
 import Banner from "./components/Card/Banner";
 const apiUrl = process.env.NEXT_PUBLIC_API;
+import { useUser } from "@auth0/nextjs-auth0/client";
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
+  const { user, isLoading } = useUser();
+  const router = useRouter();
+  
+  useEffect(() => {
+    if (!isLoading && user && !localStorage.getItem('redirectedToDashboard')) {
+      // Guarda en localStorage que el usuario ya fue redirigido a dashboard
+      localStorage.setItem('redirectedToDashboard', 'true');
+      router.push('/dashboard');
+    }
+  }, [user, isLoading, router]);
+
   const [json, setData] = useState({
     "Core Researcher": [],
     "Researcher Assistant": [],
