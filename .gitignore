@@ -1,0 +1,10 @@
+temporal-backend/.env
+temporal-backend/node_modules
+
+temporal-fronted/.env
+temporal-fronted/node_modules
+temporal-fronted/.next/
+
+.env
+
+

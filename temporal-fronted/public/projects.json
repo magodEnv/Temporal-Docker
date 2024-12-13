@@ -1,0 +1,60 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "title": "Nombre del proyecto",
+      "subtitle": "Descripción breve del proyecto 1",
+      "abstract": "Resumen del proyecto 1",
+      "images": [
+        "/Proyectos/project1-1.png",
+        "/Proyectos/project1-2.png"
+      ],
+      "researchers": [
+        {
+          "name": "Investigador 1",
+          "rol": "Rol o especialidad del investigador 1"
+        },
+        {
+          "name": "Investigador 2",
+          "rol": "Rol o especialidad del investigador 2"
+        }
+      ],
+      "link": "https://enlace_a_mas_informacion_1.com",
+      "start_date": "2024-09-01",
+      "end_date": "2024-09-13"
+    },
+    {
+      "id": 2,
+      "title": "Nombre del proyecto 2",
+      "subtitle": "Descripción breve del proyecto 2",
+      "abstract": "Resumen del proyecto 2",
+      "images": [
+        "/publi.png"
+      ],
+      "researchers": [
+        {
+          "name": "Investigador 3",
+          "rol": "Rol o especialidad del investigador 3"
+        },
+        {
+          "name": "Investigador 4",
+          "rol": "Rol o especialidad del investigador 4"
+        }
+      ],
+      "link": "https://enlace_a_mas_informacion_2.com",
+      "start_date": "2024-09-14",
+      "end_date": "2024-09-26"
+    },
+    {
+      "id": 3,
+      "title": "asd",
+      "subtitle": "asñldk",
+      "abstract": "asñdlk",
+      "images": [],
+      "researchers": "dsa",
+      "link": "asdkñl",
+      "start_date": "2024-09-14",
+      "end_date": "2024-09-27"
+    }
+  ]
+}

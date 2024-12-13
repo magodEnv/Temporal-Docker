@@ -1,0 +1,35 @@
+# Usa una imagen base de Node.js
+FROM node:18-alpine
+
+# Instala las dependencias necesarias para Puppeteer
+RUN apk add --no-cache \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont
+
+# Establece el directorio de trabajo dentro del contenedor
+WORKDIR /app
+
+# Establece la variable de entorno para Puppeteer
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+# Copia los archivos del proyecto
+COPY package*.json ./
+
+# Instala las dependencias
+RUN npm install
+
+# Copia el resto de los archivos del proyecto
+COPY . .
+
+# Construye la aplicación Next.js
+RUN npm run build
+
+# Expone el puerto que usará Next.js
+EXPOSE 3002
+
+# Comando para iniciar la aplicación
+CMD ["npm", "start"]

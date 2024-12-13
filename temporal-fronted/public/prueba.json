@@ -1,0 +1,74 @@
+[
+	{
+		"id": 0,
+		"name": "Cristobal Navarrro",
+		"institute": "Universidad Austral de Chile",
+		"rol": "Researcher",
+		"description": "Lorem ipsum dolor sit amet, consectet",
+		"projects": [
+			{
+				"title": "Título del Proyecto",
+				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+			},
+			{
+				"title": "Título del Proyecto 2",
+				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+			}
+		],
+		"photo": "/CristobalNavarro.jpg"
+	},
+	{
+		"id": 1,
+		"name": "Hector Ferrada",
+		"institute": "Universidad de Chile",
+		"rol": "Researcher",
+		"description": "Lorem ipsum dolor sit amet, consectet",
+		"projects": [
+			{
+				"title": "Título del Proyecto",
+				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+			},
+			{
+				"title": "Título del Proyecto 2",
+				"description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+			}
+		],
+		"photo": "/photos/HFerrada.jpeg"
+	},
+	{
+		"id": "2",
+		"name": "Felipe Quezada",
+		"institute": "Universidad de Chile",
+		"rol": "Researcher Assistant",
+		"description": null,
+		"projects": [],
+		"photo": "/CristobalNavarro.jpg"
+	},
+	{
+		"id": "3",
+		"name": "Roberto Carrasco",
+		"institute": "Universidad de Chile",
+		"rol": "Student",
+		"description": null,
+		"projects": [],
+		"photo": "/CristobalNavarro.jpg"
+	},
+	{
+		"id": "4",
+		"name": "Ricardo Barrientos",
+		"institute": "Universidad de Chile",
+		"rol": "Collaborator",
+		"description": null,
+		"projects": [],
+		"photo": "/CristobalNavarro.jpg"
+	},
+	{
+		"id": "5",
+		"name": "Eduardo Hopperdietzel",
+		"institute": null,
+		"rol": null,
+		"description": "[2023, Eng] Louvre Library for Composers",
+		"projects": [],
+		"photo": null
+	}
+]

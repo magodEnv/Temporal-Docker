@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./temporal-fronted
+    ports:
+      - "3002:3002"
+    environment:
+      BACKEND_URL: http://localhost:4002
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    build: ./temporal-backend
+    ports:
+      - "4002:4002"
+    depends_on:
+      - db
+    env_file:
+      - ./temporal-backend/.env
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: sd37HbT6
+      MYSQL_DATABASE: temporal
+      MYSQL_USER: api-backend
+      MYSQL_PASSWORD: JSN3Ds35dx
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./data/script.sql:/docker-entrypoint-initdb.d/script.sql
+
+volumes:
+  db-data:

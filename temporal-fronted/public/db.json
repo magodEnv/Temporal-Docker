@@ -1,0 +1,69 @@
+{
+  "users": {
+    "user": "admin",
+    "password": "admin123"
+  },
+  "Researchers": [
+    {
+      "id":0,
+      "name": "Cristobal Navarrro",
+      "photo": "./CristobalNavarro.jpg",
+      "Institute": "Universidad Austral de Chile",
+      "Description": "Lorem ipsum dolor sit amet, consectet",
+      "projects": [
+        {
+          "title": "Título del Proyecto",
+          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        },
+        {
+          "title": "Título del Proyecto 2",
+          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        }
+      ]
+    },
+    {
+      "id":1,
+      "name": "Hector Ferrada",
+      "photo": "./HFerrada.jpeg",
+      "Institute": "Universidad de Chile",
+      "Description": "Lorem ipsum dolor sit amet, consectet",
+      "projects": [
+        {
+          "title": "Título del Proyecto",
+          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        },
+        {
+          "title": "Título del Proyecto 2",
+          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        }
+      ]
+    }
+  ],
+  "Researcher Assistant": [
+    {
+      "name": "Felipe Quezada",
+      "photo": "./CristobalNavarro.jpg",
+      "Institute": "Universidad de Chile"
+    }
+  ],
+  "Students": [
+    {
+      "name": "Roberto Carrasco",
+      "photo": "./CristobalNavarro.jpg",
+      "Institute": "Universidad de"
+    }
+  ],
+  "Collaborators": [
+    {
+      "name": "Ricardo Barrientos",
+      "photo": "./CristobalNavarro.jpg",
+      "Institute": "Universidad de Chile"
+    }
+  ],
+  "Alumni": [
+    {
+      "name": "Eduardo Hopperdietzel",
+      "Description": "[2023, Eng] Louvre Library for Composers"
+    }
+  ]
+}
