@@ -88,6 +88,8 @@ const Proyectos = () => {
 
     fetchData();
   }, []);
+ 
+
 
   /*
   //------------------------------- intervalo de imagenes -------------------------------------
@@ -109,13 +111,22 @@ const Proyectos = () => {
 
   useEffect(() => {
     console.log("Current editing project:", editingProject);
-  }, [editingProject]);
+  }, [editingProject, projects]);
   useEffect(() => {
     console.log("Core Researcher Originales", originalCoreResearcher);
   }, [originalCoreResearcher]);
   useEffect(() => {
     console.log("Colaborators Originales:", originalResearcher);
   }, [originalResearcher]);
+  useEffect(() => {
+    // Cuando imagePreviews cambia, asegura que la interfaz se actualice
+    console.log("Imagenes previas actualizadas:", imagePreviews);
+  }, [imagePreviews]);
+  
+  useEffect(() => {
+    // Cuando coreImagePreviews cambia, actualiza las imágenes principales en el proyecto
+    console.log("Imagen principal actualizada:", coreImagePreviews);
+  }, [coreImagePreviews]);
   /*
   useEffect(() => {
     console.log("coreImagePreviews:", coreImagePreviews);
@@ -273,26 +284,7 @@ const Proyectos = () => {
       newPreviews.push(URL.createObjectURL(file));  // Previsualización con URL.createObjectURL
       newSelectedFiles.push(file);  // Archivos reales para la subida
   
-      // Aquí podrías hacer la subida al servidor con el archivo real
-      // Ejemplo con FormData y fetch:
-      const formData = new FormData();
-      formData.append("image", file, newBaseName);
   
-      // Subida al servidor
-      try {
-        const response = await fetch("/upload-endpoint", {
-          method: "POST",
-          body: formData,
-        });
-        const data = await response.json();
-        if (data.success) {
-          console.log("Archivo subido correctamente");
-        } else {
-          console.error("Error en la subida");
-        }
-      } catch (error) {
-        console.error("Error al subir el archivo", error);
-      }
     });
   
     Promise.all(promises).then(() => {
@@ -575,7 +567,35 @@ const Proyectos = () => {
   const handleDeleteProyecto = async (id) => {
     try {
       // Elimina las imágenes del servidor
+    
+      const project = projects.find(project => project.id === id);
+      
+      // Si encontramos el proyecto, mostramos su título en el log
+      if(project.imagenes.length > 0){ 
+        console.log("Deleting images of project:", project.title);
+        for(let i = 0; i < project.imagenes.length; i++){
+          const imageNameToDelete = project.imagenes[i].url.split("/").pop();
+          const encodedImageName = encodeURIComponent(imageNameToDelete);
+          try {
+            const response = await fetch(
+              `/api/upload?filename=${encodedImageName}`,
+              {
+                method: "DELETE",
+              }
+            );
+    
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+          } catch (error) {
+            setAlertMessage(["Error", "Failed to delete file"]);
+            setShowAlert(true);
+            console.error("Error deleting file:", error);
+          }
 
+        }
+      }
+      
 
       //Elimina el proyecto de la base de datos
       const response = await fetch(`${apiUrl}/api/proyectos/${id}`, {
