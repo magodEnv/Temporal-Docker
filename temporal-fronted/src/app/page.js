@@ -12,17 +12,18 @@ import ResearcherContainer from "./components/Card/ResearcherContainer";
 import Banner from "./components/Card/Banner";
 const apiUrl = process.env.NEXT_PUBLIC_API;
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import { Card, Skeleton } from "@nextui-org/react";
 
 export default function Page() {
   const { user, isLoading } = useUser();
   const router = useRouter();
-  
+
   useEffect(() => {
-    if (!isLoading && user && !localStorage.getItem('redirectedToDashboard')) {
+    if (!isLoading && user && !localStorage.getItem("redirectedToDashboard")) {
       // Guarda en localStorage que el usuario ya fue redirigido a dashboard
-      localStorage.setItem('redirectedToDashboard', 'true');
-      router.push('/dashboard');
+      localStorage.setItem("redirectedToDashboard", "true");
+      router.push("/dashboard");
     }
   }, [user, isLoading, router]);
 
@@ -51,7 +52,6 @@ export default function Page() {
       }
     };
     fetchData();
-
   }, []);
   useEffect(() => {
     fetchResearchers();
@@ -136,17 +136,16 @@ export default function Page() {
           </div>
         </div>
 
-		{/* X embed */}
-		<div className="flex p-5 items-center justify-center">
-			{/*{xposts.map((id) => (
+        {/* X embed */}
+        <div className="flex p-5 items-center justify-center">
+          {/*{xposts.map((id) => (
 				<Tweet key={id} id={id} />
 			))}*/}
-			<XCardNegro />
-		</div>
-		{/*<div className="flex p-5 items-center justify-center">
+          <XCardNegro />
+        </div>
+        {/*<div className="flex p-5 items-center justify-center">
           <XCard />
         </div>*/}
-
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 bg-zinc-600 w-full">
