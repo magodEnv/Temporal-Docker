@@ -1,44 +1,35 @@
-# Usa una imagen optimizada para Node.js
-FROM node:18-alpine
+# Use Node.js 18 base image
+FROM node:18
 
-# Instala las dependencias necesarias para Puppeteer y Chromium
-RUN apk add --no-cache \
-    chromium \
-    nss \
-    freetype \
-    harfbuzz \
+# Install dependencies for Chrome and system utilities
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
     ca-certificates \
-    ttf-freefont \
-    libstdc++ \
-    libx11 \
-    libxcomposite \
-    libxdamage \
-    libxrandr \
-    libxi \
-    libxtst \
-    alsa-lib \
-    libc6-compat \
-    gdk-pixbuf \
-    gtk+3.0
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 
-# Establece el directorio de trabajo
+# Set work directory
 WORKDIR /app
 
-# Establece las variables de entorno para Puppeteer
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+# Set Puppeteer environment variables
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
-# Copia los archivos de dependencias
+# Copy dependency files
 COPY package*.json ./
 
-# Instala las dependencias
+# Install dependencies
 RUN npm install
 
-# Copia el resto del código fuente
+# Copy remaining source code
 COPY . .
 
-# Expone el puerto del servidor
+# Expose port
 EXPOSE 4002
 
-# Comando para iniciar el backend
+# Start command
 CMD ["npm", "run", "dev"]

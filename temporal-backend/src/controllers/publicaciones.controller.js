@@ -120,6 +120,7 @@ export async function createPublicacion(req, res) {
           console.log(`Iniciando scraping para ${url}`);
           const browser = await puppeteer.launch({
             headless: true,
+            executablePath: '/usr/bin/google-chrome',
             args: ["--no-sandbox", "--disable-setuid-sandbox"],
           });
 
