@@ -16,7 +16,7 @@ import publicacionesRoutes from "./routes/publicaciones.routes.js";
 import imagenesRoutes from "./routes/imagen.routes.js";
 import mainProyetos from "./routes/mainProyectos.routes.js";
 import landingInfo from "./routes/landingInfo.routes.js";
-import login from "./routes/login.routes.js";
+import twitter from "./routes/twitter.routes.js";
 
 // Middlewares
 app.use(morgan("dev"));
@@ -38,7 +38,7 @@ app.use("/api/publicaciones", publicacionesRoutes);
 app.use("/api/imagenes", imagenesRoutes);
 app.use("/api/mainProyectos", mainProyetos);
 app.use("/api/landingInfo", landingInfo);
-app.use("/api/login", login);
+app.use("/api/twitter", twitter);
 
 app.listen(PORT, () => {
   console.log(`Servidor backend escuchando en http://localhost:${PORT}`);

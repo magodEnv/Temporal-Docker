@@ -84,17 +84,14 @@ CREATE TABLE landingInfo (
     imagen VARCHAR(255)
 );
 
--- Tabla de login (Se usara?)
-CREATE TABLE login (
+-- Tabla de X 
+CREATE TABLE twitter (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL
+    nombre VARCHAR(255) ,
+    token BIGINT 
 );
  --                                            Ingresando datos de prueba:
--- Tabla login:
-INSERT INTO login (username, password, email)
-VALUES ('admin', 'admin', 'correo@correo.cl');
+INSERT INTO twitter (nombre, token) VALUES ('NVIDIA app officially launches today featuring', '1856435517648449828');
 
 -- Tabla Personas: 
 INSERT INTO personas (name_, grade, institute, correo, rol, core_page, description_, photo)
