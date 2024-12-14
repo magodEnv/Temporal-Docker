@@ -9,7 +9,8 @@ import { MdArticle } from "react-icons/md";
 import { MdOutlineLogin } from "react-icons/md";
 import { AiFillHome } from "react-icons/ai";
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import { FaXTwitter } from "react-icons/fa6";
 
 const sections = [
   { href: "/dashboard", label: "Main", icon: AiFillHome },
@@ -20,6 +21,7 @@ const sections = [
     label: "Publications",
     icon: MdArticle,
   },
+  { href: "/dashboard/Embedded", label: "Embedded Post", icon: FaXTwitter },
 ];
 
 const logout = { href: "#", label: "Log out", icon: MdOutlineLogin };
@@ -32,7 +34,7 @@ const SideBarAdmin = () => {
   useEffect(() => {
     // Redirige a login si no hay usuario autenticado
     if (!isLoading && !user) {
-      router.push('/api/auth/login');
+      router.push("/api/auth/login");
     }
   }, [user, isLoading, router]);
 
@@ -56,9 +58,9 @@ const SideBarAdmin = () => {
   };
 
   const handleLogout = () => {
-    console.log('logout');
+    console.log("logout");
     window.location.href = "/api/auth/logout";
-    localStorage.removeItem('redirectedToDashboard');
+    localStorage.removeItem("redirectedToDashboard");
   };
 
   return (
