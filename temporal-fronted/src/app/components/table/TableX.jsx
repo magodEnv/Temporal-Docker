@@ -6,17 +6,15 @@ import { TiArrowSortedUp } from "react-icons/ti";
 import { AlertConfirm } from "../Common/Alert";
 
 const titles = [
-  ["ID", ""],
-  ["Name", ""],
-  ["ID Embed", "correo"],
+  ["ID", "id"],
+  ["Name", "nombre"],
+  ["ID Embed", "token"],
 ];
 
 const TablaX = ({ posts, handleEditClick, handleDelete, currentPerson }) => {
   const [sortConfig, setSortConfig] = useState({ key: "", direction: "asc" });
-  const [current, setCurrent] = useState(null);
-  const [isOpen, setIsOpen] = useState(false);
 
-  const sortedPeople = [...posts].sort((a, b) => {
+  const sortedPost = [...posts].sort((a, b) => {
     if (!sortConfig.key) return 0; // No ordenar si no hay columna seleccionada
     const aValue = a[sortConfig.key]
       ? a[sortConfig.key].toString().toLowerCase()
@@ -34,13 +32,11 @@ const TablaX = ({ posts, handleEditClick, handleDelete, currentPerson }) => {
   });
 
   const handleSort = (key) => {
-    if (key !== "") {
-      let direction = "asc";
-      if (sortConfig.key === key && sortConfig.direction === "asc") {
-        direction = "desc";
-      }
-      setSortConfig({ key, direction });
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
     }
+    setSortConfig({ key, direction });
   };
 
   return (
@@ -80,22 +76,19 @@ const TablaX = ({ posts, handleEditClick, handleDelete, currentPerson }) => {
         </thead>
         <tbody>
           {posts &&
-            sortedPeople.map((post, index) => (
+            sortedPost.map((post, index) => (
               <tr
                 key={index}
                 className=" font-light items-center odd:bg-tablaIntercalado1 even:bg-tablaIntercalado2"
               >
-                <td className="py-3 px-6 text-left text-xs border-r-2 border-background w-20">
-                  <BubbleImage image={post.photo} />
+                <td className="py-3 px-6 text-left border-r-2 border-background">
+                  {post.id}
                 </td>
                 <td className="py-3 px-6 text-left border-r-2 border-background">
-                  {post.name_}
+                  {post.nombre}
                 </td>
                 <td className="py-3 px-6 text-left border-r-2 border-background">
-                  {post.correo}
-                </td>
-                <td className="py-3 px-6 text-left border-r-2 border-background">
-                  {post.institute}
+                  {post.token}
                 </td>
                 <td className="w-20">
                   <div className="flex justify-center items-center h-full space-x-3">
@@ -105,11 +98,7 @@ const TablaX = ({ posts, handleEditClick, handleDelete, currentPerson }) => {
                       className="hover:text-primary duration-150"
                     />
                     <FaTrash
-                      onClick={() => {
-                        currentPerson(post);
-                        setCurrent(post);
-                        setIsOpen(true);
-                      }}
+                      onClick={() => handleDelete(post)}
                       size={20}
                       className="hover:text-primary duration-150"
                     />
@@ -119,18 +108,6 @@ const TablaX = ({ posts, handleEditClick, handleDelete, currentPerson }) => {
             ))}
         </tbody>
       </table>
-      {isOpen && (
-        <AlertConfirm
-          title="Delete Person"
-          message="Are you sure you want to delete this person?"
-          cancel={() => setIsOpen(false)}
-          confirm={() => {
-            handleDelete(current);
-            setIsOpen(false);
-          }}
-          action="Delete"
-        />
-      )}
     </div>
   );
 };
