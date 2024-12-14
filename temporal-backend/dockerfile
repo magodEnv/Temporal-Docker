@@ -1,8 +1,32 @@
 # Usa una imagen optimizada para Node.js
 FROM node:18-alpine
 
+# Instala las dependencias necesarias para Puppeteer y Chromium
+RUN apk add --no-cache \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont \
+    libstdc++ \
+    libx11 \
+    libxcomposite \
+    libxdamage \
+    libxrandr \
+    libxi \
+    libxtst \
+    alsa-lib \
+    libc6-compat \
+    gdk-pixbuf \
+    gtk+3.0
+
 # Establece el directorio de trabajo
 WORKDIR /app
+
+# Establece las variables de entorno para Puppeteer
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
 # Copia los archivos de dependencias
 COPY package*.json ./

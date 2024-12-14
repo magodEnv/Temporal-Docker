@@ -1,14 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaXTwitter } from "react-icons/fa6";
 import { Tweet } from "react-tweet";
+import { Card, Skeleton } from "@nextui-org/react";
 
 const apiUrl = process.env.NEXT_PUBLIC_API;
 
 const XCard = ({ tweetUrl, tweetText, tweetDate }) => {
   const tweetRef = useRef(null);
+  const [loadingX, setLoadingX] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [xposts, setXposts] = useState([]); // Id's de posts de Twitter
-  
+
   useEffect(() => {
     setIsClient(true);
     const scriptExists = document.querySelector(
@@ -26,10 +28,11 @@ const XCard = ({ tweetUrl, tweetText, tweetDate }) => {
       // Recargar los widgets si el script ya existe
       window.twttr?.widgets?.load(tweetRef.current);
     }
-  }, []); 
+  }, []);
 
   useEffect(() => {
     const fetchX = async () => {
+      setLoadingX(true);
       try {
         const response = await fetch("/api/X", {
           method: "GET",
@@ -39,20 +42,18 @@ const XCard = ({ tweetUrl, tweetText, tweetDate }) => {
         }
         const data = await response.json();
         //console.log("daaaaataaa: ", data);
-        setXposts(data)
+        setXposts(data);
       } catch (error) {
         console.error("There was an error!", error);
+      } finally {
+        setLoadingX(false);
       }
-      
-
-    }
+    };
     fetchX();
-
   }, []);
   useEffect(() => {
     console.log("xposts:", xposts);
   }, [xposts]);
-
 
   if (!isClient) {
     return null; // Esto evita que el tweet se renderice durante la hidración
@@ -68,13 +69,32 @@ const XCard = ({ tweetUrl, tweetText, tweetDate }) => {
         ref={tweetRef}
         className="space-y-4 overflow-y-auto max-h-screen border-t border-b border-gray-500 py-4"
       >
-        {xposts.map((id) => (
-          <Tweet key={id} id={id} />
-        ))}
+        {loadingX ? (
+          <Card
+            className="h-[22rem] w-[25rem] space-y-5 p-4 bg-zinc-900"
+            radius="lg"
+          >
+            <Skeleton className="rounded-lg">
+              <div className="h-24 rounded-lg bg-background" />
+            </Skeleton>
+            <div className="space-y-3">
+              <Skeleton className="w-3/5 rounded-lg">
+                <div className="h-3 w-3/5 rounded-lg bg-background" />
+              </Skeleton>
+              <Skeleton className="w-4/5 rounded-lg">
+                <div className="h-3 w-4/5 rounded-lg bg-background" />
+              </Skeleton>
+              <Skeleton className="w-2/5 rounded-lg">
+                <div className="h-3 w-2/5 rounded-lg bg-background" />
+              </Skeleton>
+            </div>
+          </Card>
+        ) : (
+          xposts.map((id) => <Tweet key={id} id={id} />)
+        )}
       </div>
     </div>
   );
-  
 };
 
 export default XCard;

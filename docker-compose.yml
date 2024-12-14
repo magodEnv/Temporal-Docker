@@ -24,7 +24,7 @@ services:
       - app-network
 
   db:
-    image: mysql:8.0
+    image: mysql:8.0.28
     environment:
       MYSQL_ROOT_PASSWORD: sd37HbT6
       MYSQL_DATABASE: temporal

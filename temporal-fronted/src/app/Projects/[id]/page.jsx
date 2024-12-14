@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import GaleriaImagenes from "@/app/components/ui/GaleriaImagenes";
 const apiUrl = process.env.NEXT_PUBLIC_API;
 
 const Page = ({ params }) => {
@@ -26,6 +27,7 @@ const Page = ({ params }) => {
       }
       const data = await response.json();
       const proyecto = buscarPorId(data.data, id);
+      console.log("En id:", proyecto.imagenes);
       setProjectos(proyecto);
     } catch (error) {
       setError(error.message);
@@ -68,15 +70,9 @@ const Page = ({ params }) => {
       </div>
     );
   }
-
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex justify-center bg-slate-400">
-        <img
-          src={"/Images/fondecyt3160182.png"}
-          className="w-auto h-52 object-contain"
-        />
-      </div>
+      <GaleriaImagenes params={{ path: [project.imagenes] }} />
       <div className="flex flex-col justify-center w-full px-4 py-3 md:px-24">
         <h1 className="text-start text-4xl font-light">{project.title}</h1>
         <h2 className="text-start text-lg font-light italic">
