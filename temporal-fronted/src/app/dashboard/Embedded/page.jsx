@@ -2,21 +2,23 @@
 import { FaXTwitter } from "react-icons/fa6";
 import { useState, useEffect } from "react";
 import TablaX from "@/app/components/table/TableX";
+import ContainerForm from "@/app/components/Forms/ContainerForm";
+import InputBasic from "@/app/components/Forms/InputBasic";
+import { Alert } from "@/app/components/Common/Alert";
 
 const apiUrl = process.env.NEXT_PUBLIC_API;
 const url = `${apiUrl}/api/twitter`;
 
 const Page = () => {
-  const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState([]);
   const [postToken, setPostToken] = useState("");
   const [postName, setPostName] = useState("");
+  const [editingPost, setEditingPost] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
       try {
         const response = await fetch(url);
         if (!response.ok) throw new Error("Network response was not ok");
@@ -27,34 +29,40 @@ const Page = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        setLoading(false);
       }
     };
     fetchData();
   }, []);
 
-  const onSave = async () => {
-    if (!postName || !postToken) {
+  const onSave = async (post = null) => {
+    const name = post ? post.nombre : postName;
+    const token = post ? post.token : postToken;
+
+    console.log("PostName:", name);
+    console.log("PostToken:", token);
+    if (!name || !token) {
       setAlertMessage(["Error", "Both post name and token are required."]);
       setShowAlert(true);
       return;
     }
-    console.log("Token:", postToken);
-    console.log("Name:", postName);
+    console.log("Token:", token);
+    console.log("Name:", name);
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nombre: postName, token: postToken }),
+        body: JSON.stringify({ nombre: name, token: token }),
       });
       if (!response.ok) {
         const errorData = await response.json(); // Captura el error del servidor
-        console.error("Error details: ", errorData);
+        console.log("Error details: ", errorData.error);
         setAlertMessage([
           "Error",
-          `Error saving project: ${errorData.message || "Undefined"}`,
+          `Error saving project: ${
+            errorData.message || "Post token must be an integer"
+          }`,
         ]);
         setShowAlert(true);
         return;
@@ -90,8 +98,19 @@ const Page = () => {
     }
   };
 
+  const hasChanges = () => {
+    return true;
+  };
+
   const handleEdit = (post) => {
     console.log("Editando", post);
+    setEditingPost({ ...post });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    setEditingPost((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -104,7 +123,7 @@ const Page = () => {
         <div className="flex flex-col w-full justify-center items-center gap-3 text-lg">
           <input
             type="text"
-            placeholder="ID Post"
+            placeholder="Post Token"
             value={postToken}
             onChange={(e) => setPostToken(e.target.value)}
             className="mt-1 bg-background2 border-b-2 placeholder-gray-500 block min-h-8 w-full p-2 shadow-sm rounded-sm focus:ring-0 focus:outline-none"
@@ -133,6 +152,44 @@ const Page = () => {
           handleEditClick={handleEdit}
         />
       </div>
+      {editingPost && (
+        <ContainerForm
+          title="Edit Post"
+          closeContainer={() => setEditingPost(null)}
+          handleSubmit={() => {
+            onSave(editingPost);
+            setEditingPost(null);
+          }}
+          isCreating={false}
+          handleDelete={() => {
+            handleDelete(editingPost);
+            setEditingPost(null);
+          }}
+          hasChanges={hasChanges}
+        >
+          <div className="flex flex-col gap-4 w-full">
+            <InputBasic
+              title="Post Token"
+              name="token"
+              valor={editingPost.token}
+              handle={handleInputChange}
+            />
+            <InputBasic
+              title="Post Name"
+              name="nombre"
+              valor={editingPost.nombre}
+              handle={handleInputChange}
+            />
+          </div>
+        </ContainerForm>
+      )}
+      {showAlert && (
+        <Alert
+          title={alertMessage[0]}
+          message={alertMessage[1]}
+          isOpen={() => setShowAlert(false)}
+        />
+      )}
     </div>
   );
 };
