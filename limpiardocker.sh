@@ -1,16 +1,16 @@
-echo "🛑 Deteniendo todos los contenedores..."
-docker stop $(docker ps -aq) 2>/dev/null
+echo "🛑 Deteniendo contenedores relacionados con 'temporal'..."
+docker stop $(docker ps -aq --filter "name=temporal") 2>/dev/null
 
-echo "🗑 Eliminando todos los contenedores..."
-docker rm $(docker ps -aq) 2>/dev/null
+echo "🗑 Eliminando contenedores relacionados con 'temporal'..."
+docker rm $(docker ps -aq --filter "name=temporal") 2>/dev/null
 
-echo "🧹 Eliminando todas las imágenes..."
-docker rmi $(docker images -q) --force 2>/dev/null
+echo "🧹 Eliminando imágenes relacionadas con 'temporal'..."
+docker rmi $(docker images -q --filter "reference=temporal-docker-*") --force 2>/dev/null
 
-echo "📦 Eliminando todos los volúmenes..."
-docker volume rm $(docker volume ls -q) --force 2>/dev/null
+echo "📦 Eliminando volúmenes relacionados con 'temporal'..."
+docker volume rm temporal-docker_db-data --force 2>/dev/null
 
-echo "🌐 Eliminando redes no utilizadas..."
-docker network prune -f
+echo "🌐 Eliminando redes relacionadas con 'temporal'..."
+docker network rm temporal-docker_app-network 2>/dev/null
 
-echo "✅ ¡Limpieza completada! Todo ha sido eliminado."
+echo "✅ ¡Limpieza completada! Todos los recursos relacionados con 'temporal' han sido eliminados."
