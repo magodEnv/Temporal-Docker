@@ -28,7 +28,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: sd37HbT6
       MYSQL_DATABASE: temporal
-      MYSQL_USER: api-backend1
+      MYSQL_USER: api-backend
       MYSQL_PASSWORD: JSN3Ds35dx
     volumes:
       - db-data:/var/lib/mysql
