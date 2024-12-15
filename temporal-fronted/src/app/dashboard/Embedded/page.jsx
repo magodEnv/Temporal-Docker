@@ -34,21 +34,26 @@ const Page = () => {
     fetchData();
   }, []);
 
-  const onSave = async () => {
-    if (!postName || !postToken) {
+  const onSave = async (post = null) => {
+    const name = post ? post.nombre : postName;
+    const token = post ? post.token : postToken;
+
+    console.log("PostName:", name);
+    console.log("PostToken:", token);
+    if (!name || !token) {
       setAlertMessage(["Error", "Both post name and token are required."]);
       setShowAlert(true);
       return;
     }
-    console.log("Token:", postToken);
-    console.log("Name:", postName);
+    console.log("Token:", token);
+    console.log("Name:", name);
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nombre: postName, token: postToken }),
+        body: JSON.stringify({ nombre: name, token: token }),
       });
       if (!response.ok) {
         const errorData = await response.json(); // Captura el error del servidor
@@ -94,7 +99,7 @@ const Page = () => {
   };
 
   const hasChanges = () => {
-    console.log("");
+    return true;
   };
 
   const handleEdit = (post) => {
@@ -151,7 +156,10 @@ const Page = () => {
         <ContainerForm
           title="Edit Post"
           closeContainer={() => setEditingPost(null)}
-          handleSubmit={onSave}
+          handleSubmit={() => {
+            onSave(editingPost);
+            setEditingPost(null);
+          }}
           isCreating={false}
           handleDelete={() => {
             handleDelete(editingPost);
