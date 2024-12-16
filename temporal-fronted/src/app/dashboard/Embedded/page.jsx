@@ -34,9 +34,9 @@ const Page = () => {
     fetchData();
   }, []);
 
-  const onSave = async (post = null) => {
-    const name = post ? post.nombre : postName;
-    const token = post ? post.token : postToken;
+  const onSave = async (post) => {
+    console.log("Post:", post.target);
+    const { name, token } = post.target;
 
     console.log("PostName:", name);
     console.log("PostToken:", token);
@@ -45,8 +45,7 @@ const Page = () => {
       setShowAlert(true);
       return;
     }
-    console.log("Token:", token);
-    console.log("Name:", name);
+
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -69,6 +68,8 @@ const Page = () => {
       }
       const newPost = await response.json();
       setPosts((prevPosts) => [...prevPosts, newPost.data]);
+      setPostToken("");
+      setPostName("");
     } catch (error) {
       console.error("Error in request: ", error);
       setAlertMessage([
@@ -138,7 +139,8 @@ const Page = () => {
           <div className="flex justify-end w-full pt-2">
             <div
               className="flex bg-primaryDark hover:bg-primary p-2 rounded-full w-24 justify-center duration-300 cursor-pointer"
-              onClick={onSave}
+              
+              onClick={() => onSave({ target: { name: postName, token: postToken } })}
             >
               <p className="text-lg">Add</p>
             </div>
