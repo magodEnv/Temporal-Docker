@@ -28,48 +28,64 @@ const Page = () => {
         console.log(postData.data);
       } catch (error) {
         console.error("Error fetching data:", error);
-      } finally {
       }
     };
     fetchData();
   }, []);
 
   const onSave = async (post) => {
-    console.log("Post:", post.target);
-    const { name, token } = post.target;
+    console.log("PostName:", post.nombre);
+    console.log("PostToken:", post.token);
 
-    console.log("PostName:", name);
-    console.log("PostToken:", token);
-    if (!name || !token) {
+    if (!post.nombre || !post.token) {
       setAlertMessage(["Error", "Both post name and token are required."]);
       setShowAlert(true);
       return;
     }
 
+    const method = editingPost?.id ? "PUT" : "POST"; // Si tiene id, es PUT, si no es POST
+    const apiUrl = editingPost?.id
+      ? `${url}/${post.id}` // Actualizar
+      : `${url}`; // Crear nuevo
+
+    console.log("Method:", method);
+
     try {
-      const response = await fetch(url, {
-        method: "POST",
+      const response = await fetch(apiUrl, {
+        method: method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nombre: name, token: token }),
+        body: JSON.stringify({ nombre: post.nombre, token: post.token }),
       });
       if (!response.ok) {
         const errorData = await response.json(); // Captura el error del servidor
         console.log("Error details: ", errorData.error);
-        setAlertMessage([
+        setAlertMessage([ 
           "Error",
-          `Error saving project: ${
-            errorData.message || "Post token must be an integer"
-          }`,
+          `Error saving project: ${errorData.message || "Post token must be an integer"}` // Ajustar el mensaje de error
         ]);
         setShowAlert(true);
         return;
       }
-      const newPost = await response.json();
-      setPosts((prevPosts) => [...prevPosts, newPost.data]);
+      const databd = await response.json();
+      console.log("Data from the database:", databd);
+      const newPost = databd.msg;
+      console.log("New post:", newPost);
+     
+      if (editingPost?.id) {
+        // Si estamos editando un post, actualizamos ese post en lugar de agregar uno nuevo
+        setPosts((prevPosts) => prevPosts.map((p) => p.id === newPost.id ? newPost : p));
+      } else {
+        // Si es un nuevo post, lo agregamos a la lista
+        setPosts((prevPosts) => [...prevPosts, databd.data]);
+      }
+      
+
+      // Limpiar los campos y el estado
       setPostToken("");
       setPostName("");
+      setEditingPost(null);
     } catch (error) {
       console.error("Error in request: ", error);
       setAlertMessage([
@@ -99,18 +115,18 @@ const Page = () => {
     }
   };
 
-  const hasChanges = () => {
-    return true;
-  };
-
   const handleEdit = (post) => {
     console.log("Editando", post);
-    setEditingPost({ ...post });
+    setEditingPost({
+      id: post.id,  // Asegúrate de incluir el `id` del post para identificarlo durante la actualización
+      token: post.token,
+      nombre: post.nombre,
+    });
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
+    console.log(name, ": ", value);
     setEditingPost((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -139,8 +155,7 @@ const Page = () => {
           <div className="flex justify-end w-full pt-2">
             <div
               className="flex bg-primaryDark hover:bg-primary p-2 rounded-full w-24 justify-center duration-300 cursor-pointer"
-              
-              onClick={() => onSave({ target: { name: postName, token: postToken } })}
+              onClick={() => onSave({ nombre: postName, token: postToken })}  // Pasa el objeto correcto al guardar
             >
               <p className="text-lg">Add</p>
             </div>
@@ -159,15 +174,15 @@ const Page = () => {
           title="Edit Post"
           closeContainer={() => setEditingPost(null)}
           handleSubmit={() => {
-            onSave(editingPost);
-            setEditingPost(null);
+            onSave(editingPost);  // Usa el estado de editingPost directamente
+            setEditingPost(null);  // Después de guardar, limpia el estado de edición
           }}
           isCreating={false}
           handleDelete={() => {
             handleDelete(editingPost);
             setEditingPost(null);
           }}
-          hasChanges={hasChanges}
+          hasChanges={() => true}
         >
           <div className="flex flex-col gap-4 w-full">
             <InputBasic

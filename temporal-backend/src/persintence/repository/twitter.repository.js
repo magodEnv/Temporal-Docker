@@ -37,9 +37,9 @@ export async function updateTweet_(twitter) {
     twitter_update.nombre = nombre;
     twitter_update.token = token;
     await twitter_update.save();
-    return "Información de Twitter actualizada con éxito.";
+    return twitter_update;
   } catch (error) {
-    throw new Error("X information updated successfully.");
+    throw new Error("An error occurred while updating X information.");
   }
 }
 
