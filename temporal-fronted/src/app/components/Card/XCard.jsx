@@ -20,7 +20,7 @@ const XCard = ({tweetUrl, tweetText, tweetDate}) => {
       // Recargar los widgets si el script ya existe
       window.twttr?.widgets?.load(tweetRef.current);
     }
-  }, []); 
+  }, []);
 
   if (!isClient) {
     return null; // Esto evita que el tweet se renderice durante la hidración

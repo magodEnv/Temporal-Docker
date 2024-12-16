@@ -5,11 +5,11 @@ import { Card, Skeleton } from "@nextui-org/react";
 
 const apiUrl = process.env.NEXT_PUBLIC_API;
 
-const XCard = ({ tweetUrl, tweetText, tweetDate }) => {
+const XCardNegro = () => {
   const tweetRef = useRef(null);
   const [loadingX, setLoadingX] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  const [xposts, setXposts] = useState([]); // Id's de posts de Twitter
+  const [xposts, setXposts] = useState([]); // Array de publicaciones de Twitter
 
   useEffect(() => {
     setIsClient(true);
@@ -34,15 +34,16 @@ const XCard = ({ tweetUrl, tweetText, tweetDate }) => {
     const fetchX = async () => {
       setLoadingX(true);
       try {
-        const response = await fetch("/api/X", {
+        const response = await fetch(`${apiUrl}/api/twitter`, {
           method: "GET",
         });
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        //console.log("daaaaataaa: ", data);
-        setXposts(data);
+        console.log("daaaaataaa: ", data);
+        // Extraer el array de publicaciones del objeto `data`
+        setXposts(data.data); // Aquí `data.data` es el array con las publicaciones
       } catch (error) {
         console.error("There was an error!", error);
       } finally {
@@ -51,12 +52,13 @@ const XCard = ({ tweetUrl, tweetText, tweetDate }) => {
     };
     fetchX();
   }, []);
+
   useEffect(() => {
     console.log("xposts:", xposts);
   }, [xposts]);
 
   if (!isClient) {
-    return null; // Esto evita que el tweet se renderice durante la hidración
+    return null; // Esto evita que el tweet se renderice durante la hidratación
   }
 
   return (
@@ -90,11 +92,14 @@ const XCard = ({ tweetUrl, tweetText, tweetDate }) => {
             </div>
           </Card>
         ) : (
-          xposts.map((id) => <Tweet key={id} id={id} />)
+          // Mapeo del array de publicaciones
+          xposts.map((post, index) => (
+            <Tweet key={`tweet-${index}`} id={post.token} />
+          ))
         )}
       </div>
     </div>
   );
 };
 
-export default XCard;
+export default XCardNegro;

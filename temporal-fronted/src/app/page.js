@@ -2,8 +2,6 @@
 import { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import Image from "next/image";
-import ResearcherCard from "./components/Card/ResearcherCard";
-import XCard from "./components/Card/XCard";
 import XCardNegro from "./components/Card/XCardNegro";
 import StudentCard from "./components/Card/StudentCard";
 import AlumniCard from "./components/Card/AlumniCard";
@@ -13,7 +11,6 @@ import Banner from "./components/Card/Banner";
 const apiUrl = process.env.NEXT_PUBLIC_API;
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { useRouter } from "next/navigation";
-import { Card, Skeleton } from "@nextui-org/react";
 
 export default function Page() {
   const { user, isLoading } = useUser();
