@@ -58,7 +58,7 @@ const SideBarAdmin = () => {
   };
 
   const handleLogout = () => {
-    console.log("logout");
+    //console.log("logout");
     window.location.href = "/api/auth/logout";
     localStorage.removeItem("redirectedToDashboard");
   };

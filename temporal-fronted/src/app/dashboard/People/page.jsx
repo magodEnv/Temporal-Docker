@@ -34,9 +34,9 @@ export default function Page() {
       }
       const result = await response.json();
       setData(result.data || []); // Si no hay "data", se usa un arreglo vacío
-      //console.log("personas: " + JSON.stringify(result.data));
+      ////console.log("personas: " + JSON.stringify(result.data));
     } catch (error) {
-      console.error("Error fetching investigadores:", error);
+      ////console.error("Error fetching investigadores:", error);
       setError("Error loading researchers");
     }
   };
@@ -66,7 +66,7 @@ export default function Page() {
   const handleSelectRole = (role) => {
     setSelectedRole(role);
     if (role === "All") {
-      console.log("All");
+      //console.log("All");
     }
     fetchResearchers(); // Opcional: refrescar la lista al cambiar de rol
   };
@@ -82,7 +82,7 @@ export default function Page() {
       });
 
       if (response.ok) {
-        console.log("Researcher successfully eliminated: ", personId.name_);
+        //console.log("Researcher successfully eliminated: ", personId.name_);
         setAlertMessage(
           "",
           "Researcher " + personId.name_ + " successfully eliminated"
@@ -118,9 +118,9 @@ export default function Page() {
         if (!response.ok) {
           throw new Error("Error deleting image from server");
         }
-        console.log("Imagen eliminada con éxito");
+        //console.log("Imagen eliminada con éxito");
       } catch (error) {
-        console.error("Error deleting file:", error);
+        //console.error("Error deleting file:", error);
       }
     }
   };

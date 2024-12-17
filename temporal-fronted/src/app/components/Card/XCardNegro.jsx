@@ -41,11 +41,11 @@ const XCardNegro = () => {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        console.log("daaaaataaa: ", data);
+        //console.log("daaaaataaa: ", data);
         // Extraer el array de publicaciones del objeto `data`
         setXposts(data.data); // Aquí `data.data` es el array con las publicaciones
       } catch (error) {
-        console.error("There was an error!", error);
+        //console.error("There was an error!", error);
       } finally {
         setLoadingX(false);
       }
@@ -54,7 +54,7 @@ const XCardNegro = () => {
   }, []);
 
   useEffect(() => {
-    console.log("xposts:", xposts);
+    //console.log("xposts:", xposts);
   }, [xposts]);
 
   if (!isClient) {

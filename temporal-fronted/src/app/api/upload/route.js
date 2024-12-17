@@ -17,7 +17,7 @@ export const POST = async (req, res) => {
   }
   const buffer = Buffer.from(await file.arrayBuffer());
   const filename = file.name.replaceAll(" ", "_");
-  console.log(filename);
+  //console.log(filename);
 
   try {
     await writeFile(
@@ -27,7 +27,7 @@ export const POST = async (req, res) => {
 
     return NextResponse.json({ Message: "Success", status: 201 });
   } catch (error) {
-    console.log("Error occurred ", error);
+    //console.log("Error occurred ", error);
     return NextResponse.json({ Message: "Failed", status: 500 });
   };
 }
@@ -47,7 +47,7 @@ export const DELETE = async (req) => {
     await fs.promises.unlink(filePath);
     return NextResponse.json({ Message: "File deleted successfully.", status: 200 });
   } catch (error) {
-    console.log("Error occurred while deleting the file:", error);
+    //console.log("Error occurred while deleting the file:", error);
     return NextResponse.json({ Message: "Failed to delete file.", status: 500 });
   }
 };

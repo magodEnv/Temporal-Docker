@@ -82,7 +82,7 @@ const Proyectos = () => {
         setInvestigadoresExistentes(investigadoresData.data || []);
         setCurrentImageIndices(Array(proyectosData.data.length).fill(0));
       } catch (error) {
-        console.error("Error fetching data:", error);
+        //console.error("Error fetching data:", error);
       }
     };
 
@@ -110,39 +110,39 @@ const Proyectos = () => {
   //------------------------------------- Debugging -------------------------------------
 
   useEffect(() => {
-    console.log("Current editing project:", editingProject);
+    //console.log("Current editing project:", editingProject);
   }, [editingProject, projects]);
   useEffect(() => {
-    console.log("Core Researcher Originales", originalCoreResearcher);
+    //console.log("Core Researcher Originales", originalCoreResearcher);
   }, [originalCoreResearcher]);
   useEffect(() => {
-    console.log("Colaborators Originales:", originalResearcher);
+    //console.log("Colaborators Originales:", originalResearcher);
   }, [originalResearcher]);
   useEffect(() => {
     // Cuando imagePreviews cambia, asegura que la interfaz se actualice
-    console.log("Imagenes previas actualizadas:", imagePreviews);
+    //console.log("Imagenes previas actualizadas:", imagePreviews);
   }, [imagePreviews]);
   
   useEffect(() => {
     // Cuando coreImagePreviews cambia, actualiza las imágenes principales en el proyecto
-    console.log("Imagen principal actualizada:", coreImagePreviews);
+    //console.log("Imagen principal actualizada:", coreImagePreviews);
   }, [coreImagePreviews]);
   /*
   useEffect(() => {
-    console.log("coreImagePreviews:", coreImagePreviews);
+    //console.log("coreImagePreviews:", coreImagePreviews);
   }, [coreImagePreviews]); 
   useEffect(() => {
-    console.log("imagePreviews:", imagePreviews);
+    //console.log("imagePreviews:", imagePreviews);
   }, [imagePreviews]);
   useEffect(() => {
-    console.log("previewImagenes:", previewImagenes);
+    //console.log("previewImagenes:", previewImagenes);
   }, [previewImagenes]); 
   */
   //------------------------------------- Manejo de los cambios -------------------------------------
 
   // Funcion que maneja la edicion de un proyecto (Carga los datos del proyecto en el formulario)
   const handleEditClick = (project) => {
-    //console.log("Proyecto seleccionado:", project);
+    ////console.log("Proyecto seleccionado:", project);
     setIsCreating(false);
     setAlertMessage(["", "Changes saved successfully"]);
     setEditingProject({ ...project });
@@ -215,12 +215,12 @@ const Proyectos = () => {
   // Funcion que maneja los cambios en los investigadores de un proyecto
   const handleInputChangeResearcher = (selectedResearchers) => {
     setSelectedResearcher(selectedResearchers);
-    //console.log("selectedResearchers: ", selectedResearchers);
+    ////console.log("selectedResearchers: ", selectedResearchers);
   };
 
   const handleInputChangeCoreResearcher = (coreResearchers) => {
     setSelectCoreResearcher(coreResearchers);
-    //console.log("coreResearchers: ", coreResearchers);
+    ////console.log("coreResearchers: ", coreResearchers);
   };
 
   //------------------------------------- Imagenes -------------------------------------
@@ -424,7 +424,7 @@ const Proyectos = () => {
   //Funcion que maneja el envio de los cambios a la BD (Crear o editar)
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //console.log("Proyecto a guardar:", editingProject);
+    ////console.log("Proyecto a guardar:", editingProject);
 
     //Funcion que da la alerta de que code_project es algo diferente a INT (code_project es INT)
     if (isNaN(editingProject.code_project)) {
@@ -454,7 +454,7 @@ const Proyectos = () => {
     for (const imageUrl of imagesToDelete) {
       const imageNameToDelete = imageUrl.split("/").pop();
       const encodedImageName = encodeURIComponent(imageNameToDelete);
-      console.log("Imagen a eliminar en syubmi:", imageUrl);
+      //console.log("Imagen a eliminar en syubmi:", imageUrl);
       try {
         const response = await fetch(
           `/api/upload?filename=${encodedImageName}`,
@@ -469,7 +469,7 @@ const Proyectos = () => {
       } catch (error) {
         setAlertMessage(["Error", "Failed to delete file"]);
         setShowAlert(true);
-        console.error("Error deleting file:", error);
+        //console.error("Error deleting file:", error);
       }
     }
 
@@ -488,11 +488,11 @@ const Proyectos = () => {
         }
 
         const data = await response.json();
-        ////console.log(data);
+        //////console.log(data);
       } catch (error) {
         setAlertMessage(["Error", "Failed to upload file"]);
         setShowAlert(true);
-        console.error("Error uploading file:", error);
+        //console.error("Error uploading file:", error);
       }
     }
     // Si no se han seleccionado imágenes, asignamos la imagen por defecto
@@ -509,7 +509,7 @@ const Proyectos = () => {
     const url = editingProject.id
       ? `${apiUrl}/api/proyectos/${editingProject.id}` // Actualizar
       : `${apiUrl}/api/proyectos`; // Crear nuevo
-    //console.log("metodo: ", method); //metodo:  PUT
+    ////console.log("metodo: ", method); //metodo:  PUT
 
     try {
       const response = await fetch(url, {
@@ -528,7 +528,7 @@ const Proyectos = () => {
 
       if (!response.ok) {
         const errorData = await response.json(); // Captura el error del servidor
-        console.error("Error details: ", errorData);
+        //console.error("Error details: ", errorData);
         setAlertMessage([
           "Error",
           `Error saving project: ${errorData.message || "Undefined"}`,
@@ -554,7 +554,7 @@ const Proyectos = () => {
       setAlertMessage(["", "Project saved successfully"]);
       setShowAlert(true);
     } catch (error) {
-      console.error("Error in request: ", error);
+      //console.error("Error in request: ", error);
       setAlertMessage([
         "Error",
         `There was a problem with the request: ${error.message}`,
@@ -572,7 +572,7 @@ const Proyectos = () => {
       
       // Si encontramos el proyecto, mostramos su título en el log
       if(project.imagenes.length > 0){ 
-        console.log("Deleting images of project:", project.title);
+        //console.log("Deleting images of project:", project.title);
         for(let i = 0; i < project.imagenes.length; i++){
           const imageNameToDelete = project.imagenes[i].url.split("/").pop();
           const encodedImageName = encodeURIComponent(imageNameToDelete);
@@ -590,7 +590,7 @@ const Proyectos = () => {
           } catch (error) {
             setAlertMessage(["Error", "Failed to delete file"]);
             setShowAlert(true);
-            console.error("Error deleting file:", error);
+            //console.error("Error deleting file:", error);
           }
 
         }
@@ -617,7 +617,7 @@ const Proyectos = () => {
         setShowAlert(true);
       }
     } catch (error) {
-      console.error("Error al eliminar el proyecto:", error);
+      //console.error("Error al eliminar el proyecto:", error);
       setAlertMessage(["Error", "There was a problem deleting the project"]);
       setShowAlert(true);
     }
@@ -643,7 +643,7 @@ const Proyectos = () => {
       imagenes: [{ url: "" }],
     });
 
-    //console.log("imagenes: " + JSON.stringify(editingProject));
+    ////console.log("imagenes: " + JSON.stringify(editingProject));
     setSelectedResearcher("");
     setSelectCoreResearcher("");
     setBodyImagenes([]);

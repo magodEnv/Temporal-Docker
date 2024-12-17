@@ -85,7 +85,7 @@ const HomeMainCard = () => {
 
   
    useEffect(() => {
-    console.log("infoProyectos: ", infoProyectos);
+    //console.log("infoProyectos: ", infoProyectos);
   }, [infoProyectos]);/*
 useEffect(() => {
     console.log("landingData titulo ", landingData );

@@ -186,9 +186,9 @@ const ResearcherForm = ({
       }
 
       const data = await response.json();
-      console.log(data);
+      //console.log(data);
     } catch (error) {
-      console.error("Error uploading file:", error);
+      //console.error("Error uploading file:", error);
     }
 
     // Ahora verifica la eliminación
@@ -208,9 +208,9 @@ const ResearcherForm = ({
         if (!response.ok) {
           throw new Error("Error al eliminar la imagen del servidor");
         }
-        console.log("Imagen eliminada con éxito");
+        //console.log("Imagen eliminada con éxito");
       } catch (error) {
-        console.error("Error deleting file:", error);
+        //console.error("Error deleting file:", error);
       }*/
     }
 
@@ -221,8 +221,8 @@ const ResearcherForm = ({
     const url = dataToSend.id
       ? `${apiUrl}/api/personas/${dataToSend.id}` // Actualizar
       : `${apiUrl}/api/personas`; // Crear nuevo
-    //console.log("metodo: ", method); //metodo:
-    //console.log("datos a enviar: ", dataToSend); //datos a enviar:
+    ////console.log("metodo: ", method); //metodo:
+    ////console.log("datos a enviar: ", dataToSend); //datos a enviar:
     try {
       const response = await fetch(url, {
         method: method,
@@ -298,9 +298,9 @@ const ResearcherForm = ({
         if (!response.ok) {
           throw new Error("Error deleting image from server");
         }
-        //console.log("Imagen eliminada con éxito");
+        ////console.log("Imagen eliminada con éxito");
       } catch (error) {
-        console.error("Error deleting file:", error);
+        //console.error("Error deleting file:", error);
       }
     }
   };

@@ -8,8 +8,7 @@ export default function Dashboard() {
   }, []);
   
   const handleClick = () => {
-    console.log("Link clicked");
-    // Coloca aquí cualquier otra lógica que necesites ejecutar
+    //console.log("Link clicked");
   };
   return (
     <div className="flex items-center justify-center h-screen bg-cover bg-center"

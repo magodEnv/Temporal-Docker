@@ -35,10 +35,10 @@ export default function Page() {
           throw new Error("Network response was not ok");
         const publicationsData = await publicacionesResponse.json();
         setExistingPublications(publicationsData.data || []);
-        console.log("Existing publications");
-        console.log(publicationsData.data);
+        //console.log("Existing publications");
+        //console.log(publicationsData.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        //console.error("Error fetching data:", error);
       } finally {
         setLoading((prev) => ({ ...prev, fetchingExisting: false }));
       }
@@ -86,20 +86,20 @@ export default function Page() {
       }
 
       const data = await response.json();
-      console.log("Raw scrape data:", data);
+      //console.log("Raw scrape data:", data);
 
       let publications = [];
       if (data && data.data) publications = data.data;
       else if (data && Array.isArray(data)) publications = data;
       else if (data && data.publications) publications = data.publications;
 
-      console.log("Parsed publications:", data);
+      //console.log("Parsed publications:", data);
 
       setScrapeStatus({ isActive: false, progress: 100 });
       setScrapedPublications(data.savedPublications);
       setUrls([]);
     } catch (error) {
-      console.error("Error starting scraping jobs:", error);
+      //console.error("Error starting scraping jobs:", error);
       alert("Error during scraping: " + error.message);
       setScrapeStatus({ isActive: false, progress: 0 });
     } finally {
@@ -108,7 +108,7 @@ export default function Page() {
   };
 
   const deletePublication = async (id, type) => {
-    console.log("Publication id:", id);
+    //console.log("Publication id:", id);
 
     try {
       const response = await fetch(`${apiUrl}/api/publicaciones/${id}`, {
@@ -127,10 +127,10 @@ export default function Page() {
           setScrapedPublications((prev) => prev.filter((pub) => pub.id !== id));
         }
 
-        console.log(response.message);
+        //console.log(response.message);
       }
     } catch (error) {
-      console.error("Error deleting publication:", error);
+      //console.error("Error deleting publication:", error);
       alert("Error al eliminar el proyecto: " + error.message);
     }
   };
@@ -160,7 +160,7 @@ export default function Page() {
       setExistingPublications([]);
       setScrapedPublications([]);
     } catch (error) {
-      console.error("Error deleting all publications:", error);
+      //console.error("Error deleting all publications:", error);
       alert("Error al eliminar todos los proyectos: " + error.message);
     }
   };
