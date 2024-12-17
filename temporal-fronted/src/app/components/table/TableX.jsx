@@ -82,7 +82,7 @@ const TablaX = ({ posts, handleEditClick, handleDelete, currentPerson }) => {
                 className=" font-light items-center odd:bg-tablaIntercalado1 even:bg-tablaIntercalado2"
               >
                 <td className="py-3 px-6 text-left border-r-2 border-background">
-                  {post.id}
+                  {index+1}
                 </td>
                 <td className="py-3 px-6 text-left border-r-2 border-background">
                   {post.nombre}
