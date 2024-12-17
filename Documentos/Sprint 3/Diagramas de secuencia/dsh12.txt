@@ -1,0 +1,49 @@
+@startuml
+actor Administrador
+participant "Frontend" as FE
+participant "Routes" as R
+participant "Controller (Scraper)" as C
+participant "Repository" as Repo
+participant "Base de Datos (Sequelize)" as DB
+
+Administrador -> FE: Ingresa enlace del perfil de Google Scholar
+FE -> R: Enviar enlace ingresado (POST /add-profile)
+R -> C: Llamar al controlador correspondiente
+C -> Repo: Validar y guardar enlace en base de datos
+alt Validación fallida del enlace
+    Repo --> C: Notificar error de validación
+    C --> R: Retornar error al frontend
+    R --> FE: Mostrar mensaje de error
+else Validación exitosa
+    Repo -> DB: Guardar enlace usando Sequelize
+    alt Error al guardar en base de datos
+        DB --> Repo: Notificar error
+        Repo --> C: Notificar error de almacenamiento
+        C --> R: Retornar error al frontend
+        R --> FE: Mostrar mensaje de error
+    else Guardado exitoso
+        DB --> Repo: Confirmación de guardado
+        Repo --> C: Notificar éxito
+        C -> C: Ejecutar scraping del perfil
+        C -> "Google Scholar": Solicitar datos del perfil
+        alt Error durante el scraping
+            C --> R: Retornar error al frontend
+            R --> FE: Mostrar mensaje de error
+        else Scraping exitoso
+            C -> Repo: Guardar información del investigador en base de datos
+            Repo -> DB: Almacenar datos del investigador
+            alt Error al almacenar datos
+                DB --> Repo: Notificar error
+                Repo --> C: Notificar error de almacenamiento
+                C --> R: Retornar error al frontend
+                R --> FE: Mostrar mensaje de error
+            else Almacenamiento exitoso
+                DB --> Repo: Confirmación de almacenamiento
+                Repo --> C: Notificar éxito
+                C --> R: Retornar éxito al frontend
+                R --> FE: Mostrar mensaje de éxito
+            end
+        end
+    end
+end
+@enduml

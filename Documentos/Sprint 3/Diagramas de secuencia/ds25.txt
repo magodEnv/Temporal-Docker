@@ -1,0 +1,25 @@
+@startuml
+actor Visitante
+participant "Frontend" as fe
+participant "Routes" as r
+participant "Controller" as c
+participant "Repository" as repo
+participant "Base de datos" as db
+
+Visitante -> fe: Entrar a sección "publications"
+fe -> r: Petición GET /publications
+r -> c: Llama al método "getPublicaciones"
+c -> repo: Llama al método "getPublicaciones_"
+repo -> db: Obtener publicaciones
+alt Error al consultar la base de datos
+    db --> repo: Notificar error
+    repo --> c: Retornar error al controlador
+    c --> r: Retornar error al frontend
+    r --> fe: Mostrar mensaje de error
+else Consulta exitosa
+    db --> repo: Enviar publicaciones
+    repo --> c: Retornar publicaciones
+    c --> r: Retornar publicaciones al frontend
+    r --> fe: Mostrar publicaciones
+end
+@enduml
