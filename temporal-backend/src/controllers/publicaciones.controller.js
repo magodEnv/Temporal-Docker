@@ -186,40 +186,42 @@ async function createPublicacionIfNotExists(publication) {
 }
 
 async function scrapePublications(page) {
+	const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 	console.log("------------------- Starting New Scrape --------------");
 
 	try {
-		// Repeatedly click the "Show more" button until it disappears or no more content is loaded
+		await page.evaluate(() => {
+			const button = document.querySelector(
+				"button#gsc_bpf_more.gs_btnPD.gs_in_ib.gs_btn_flat.gs_btn_lrge.gs_btn_lsu"
+			);
+			if (button) {
+				button.scrollIntoView({ behavior: "smooth", block: "center" });
+			}
+		});
+
+		await delay(1000);
+
+		// Intentar hacer clic en el botón
 		const button = await page.$(
 			"button#gsc_bpf_more.gs_btnPD.gs_in_ib.gs_btn_flat.gs_btn_lrge.gs_btn_lsu"
-		  );
-		
-		  if (button) {
+		);
+
+		if (button) {
 			console.log("Clicking 'Show more' button...");
 			const box = await button.boundingBox();
 			if (box) {
-			  // Dibujar un rectángulo para verificar la posición del botón
-			  await page.evaluate(({ x, y, width, height }) => {
-				const rect = document.createElement("div");
-				rect.style.position = "absolute";
-				rect.style.top = `${y}px`;
-				rect.style.left = `${x}px`;
-				rect.style.width = `${width}px`;
-				rect.style.height = `${height}px`;
-				rect.style.border = "2px solid red";
-				rect.style.zIndex = "10000";
-				document.body.appendChild(rect);
-			  }, box);
-		
-			  // Click en el centro del botón
-			  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-		
-			  // Esperar un retraso para cargar publicaciones adicionales
-			  await delay(3000); // Retraso manual
+				await page.mouse.click(
+					box.x + box.width / 2,
+					box.y + box.height / 2
+				);
+
+				// Esperar un retraso para cargar más publicaciones
+				await delay(3000);
 			}
-		  } else {
+		} else {
 			console.log("'Show more' button not found.");
-		  }
+		}
 
 		// Proceed with scraping publications
 		await page.waitForSelector("#gsc_a_b > .gsc_a_tr", { timeout: 5000 });
