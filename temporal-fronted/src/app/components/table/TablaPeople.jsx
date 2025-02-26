@@ -4,6 +4,7 @@ import BubbleImage from "./BubbleImage";
 import { useState } from "react";
 import { TiArrowSortedUp } from "react-icons/ti";
 import { AlertConfirm } from "../Common/Alert";
+const apiUrl = process.env.NEXT_PUBLIC_API;
 
 const titles = [
   ["Image", ""],
@@ -92,7 +93,7 @@ const TablaPeople = ({
                 className=" font-light items-center odd:bg-tablaIntercalado1 even:bg-tablaIntercalado2"
               >
                 <td className="py-3 px-6 text-left text-xs border-r-2 border-background w-20">
-                  <BubbleImage image={people.photo} />
+                  <BubbleImage image={`${apiUrl}/public/people/${people.photo}`} />
                 </td>
                 <td className="py-3 px-6 text-left border-r-2 border-background">
                   {people.name_}

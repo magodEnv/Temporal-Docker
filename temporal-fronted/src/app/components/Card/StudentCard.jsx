@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+const apiUrl = process.env.NEXT_PUBLIC_API;
 
 const StudentCard = ({ name, imagePath, institute, page }) => {
   return (
@@ -12,7 +13,7 @@ const StudentCard = ({ name, imagePath, institute, page }) => {
     >
       <div className="h-16 w-16 relative -left-3">
         <Image
-          src={imagePath}
+          src={`${apiUrl}/public/people/${imagePath}`}
           alt={name}
           fill
           className="object-cover rounded-full"

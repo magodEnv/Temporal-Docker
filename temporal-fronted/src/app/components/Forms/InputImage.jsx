@@ -1,3 +1,6 @@
+import { Anybody } from "next/font/google";
+
+const apiUrl = process.env.NEXT_PUBLIC_API;
 const InputImage = ({
   handleImageUpload,
   handleImageDelete,
@@ -13,14 +16,14 @@ const InputImage = ({
           <label className="text-lg font-light">Images</label>
           <input
             type="file"
+            id="inputImagen"
             onChange={handleImageUpload}
             accept="image/*"
-            multiple
             className="hidden"
-            id="fileInput"
+            
           />
           <label
-            htmlFor="fileInput"
+            htmlFor="inputImagen"
             className="cursor-pointer p-1 px-3 text-center rounded-md bg-slate-500 hover:bg-slate-700"
           >
             Browse
@@ -54,10 +57,17 @@ const InputImage = ({
 };
 
 const ImagenCard = ({ image, onClick }) => {
+  let path = "";
+  if (image.startsWith('blob:')) {
+    path = image;
+  } else {
+    path = `${apiUrl}/public/people/${image}`;
+  }
+  
   return (
     <div className="relative inline-block">
       <img
-        src={image}
+        src={ path }
         alt="Project image"
         className="w-24 h-24 object-cover rounded"
       />

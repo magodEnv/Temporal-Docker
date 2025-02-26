@@ -178,14 +178,14 @@ useEffect(() => {
             <TarjetaBienvenida
               key={index}
               title={project.title}
-              imagen={project.imagen}
+              imagen={`${apiUrl}/public/landing/${project.imagen}`}
             />
           ) : (
             // El componente TarjetaProject para los demás proyectos
             <TarjetaProject
               key={index}
               title={project.title}
-              imagen={project.imagen}
+              imagen={`${apiUrl}/public/projects/${project.imagen}`}
             />
           )
         ))}

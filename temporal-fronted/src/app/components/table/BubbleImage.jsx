@@ -1,10 +1,9 @@
-import Image from "next/image";
 
 const BubbleImage = ({ image }) => {
   return (
     <div className="rounded-full relative bg-red-50 h-10 w-10 overflow-hidden">
       <div className="absolute inset-0">
-        <Image
+        <img
           src={image}
           width={30}
           height={30}

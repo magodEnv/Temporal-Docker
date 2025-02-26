@@ -5,6 +5,7 @@ import BubbleImage from "./BubbleImage";
 import { useState } from "react";
 import { AlertConfirm } from "../Common/Alert";
 import { TiArrowSortedUp } from "react-icons/ti";
+const apiUrl = process.env.NEXT_PUBLIC_API;
 
 const titles = [
   ["Image", ""],
@@ -96,7 +97,7 @@ const TablaProjects = ({
               );
               const imagenSrc = imagenDelProyecto
                 ? project.core_image
-                : "/Images/profile_default.jpeg";
+                : "profile_default.jpeg";
 
               return (
                 <tr
@@ -104,7 +105,7 @@ const TablaProjects = ({
                   className="font-light items-center odd:bg-tablaIntercalado1 even:bg-tablaIntercalado2 h-16"
                 >
                   <td className="py-3 px-6 text-left text-xs border-r-2 border-background">
-                    <BubbleImage image={imagenSrc} />
+                    <BubbleImage image={`${apiUrl}/public/projects/${imagenSrc}`} />
                   </td>
                   <td className="py-3 px-6 text-left border-r-2 border-background">
                     {project.title}

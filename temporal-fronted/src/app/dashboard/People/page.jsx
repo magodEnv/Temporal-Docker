@@ -102,26 +102,36 @@ export default function Page() {
     fetchResearchers(); // Opcional: refrescar la lista al cambiar de rol
   };
 
+  // Funcion que eliminar una imagen de un investigador
   const handleDeleteImagen = async (personId) => {
+    
     if (personId.photo !== defaultImagePath) {
-      const imageNameToDelete = personId.photo.split("/").pop();
-      const encodedImageName = encodeURIComponent(imageNameToDelete);
-
+      console.log("imagen a eliminar: ", personId.photo);
       try {
-        const response = await fetch(
-          `/api/upload?filename=${encodedImageName}`,
-          {
-            method: "DELETE",
-          }
-        );
-
+        // Llamamos a la API para eliminar el archivo, pasando solo el nombre del archivo
+        const response = await fetch(`${apiUrl}/api/multer/delete-file`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ filename: personId.photo, categoria: "people" }),
+        });
+    
+        // Verificamos si la respuesta es correcta
         if (!response.ok) {
-          throw new Error("Error deleting image from server");
+          throw new Error("Network response was not ok");
         }
-        //console.log("Imagen eliminada con éxito");
+    
+        // Si la eliminación fue exitosa
+        console.log("Imagen eliminada con éxito.");
       } catch (error) {
-        //console.error("Error deleting file:", error);
+        // Si hubo un error al intentar eliminar la imagen
+        console.error("Error deleting file:", error);
       }
+
+
+    }else{
+      console.log("No se puede eliminar la imagen por defecto");
     }
   };
 

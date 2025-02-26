@@ -8,8 +8,10 @@ import InputBasic from "@/app/components/Forms/InputBasic";
 import ProjectsDynamic from "../components/ui/ProjectsDynamic";
 import { Alert } from "../components/Common/Alert";
 
+
+
 const apiUrl = process.env.NEXT_PUBLIC_API;
-const defaultImagePath = "/verde_inicio.jpg";
+const defaultImagePath = `verde_inicio.jpg`;
 
 export default function Page() {
   // Aca se debe corregir cuando se conecte al backend
@@ -25,11 +27,10 @@ export default function Page() {
   const [welcomeText, setwelcomeText] = useState(""); //Estado del textarea del welcome
   const [editingText, setEditingText] = useState([]); //Estado
   const [previwImage, setPreviewPhoto] = useState(null);
-
+  const [file, setFile] = useState(null);
   const [originalImagene, setOriginalImagen] = useState("");
   const [imagenDefault, setImagenDefault] = useState(false);
 
-  const [imagen, setImagen] = useState("");
 
   const [loading, setLoading] = useState(true);
 
@@ -129,7 +130,7 @@ export default function Page() {
     console.log("dataBannerWelcome: ", dataBannerWelcome);
   } , [dataBannerWelcome]); */
   useEffect(() => {
-    console.log("editingText:", editingText);
+    //console.log("editingText:", editingText);
   }, [editingText]);
 
   /* 
@@ -153,36 +154,43 @@ export default function Page() {
     setwelcomeText(e.target.value);
   };
 
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    const previewImage = URL.createObjectURL(selectedFile);
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+    setPreviewPhoto(previewImage); // URL blob de la imagen
+  };
+
+  // Función para manejar los cambios en los campos de texto
   const handleChange = async (fieldNames) => {
     let newEditingText = { ...editingText };
-    console.log("defaultImage: ", imagenDefault); 
+    //console.log("defaultImage: ", imagenDefault); 
     if (fieldNames === "banner") {
       newEditingText.banner = bannerText;
     } else if (fieldNames === "welcome") {
       newEditingText.bienvenida = welcomeText;
       if(imagenDefault){//true
+        await deletePreviousImage(newEditingText.imagen);
         newEditingText.imagen = defaultImagePath;
-        deletePreviousImage();
+        
         //setPreviewPhoto(null);
       } else {
         //console.log("Imagen sleeccionada: ", editingText.imagen);
-        newEditingText.imagen = editingText.imagen;
+        const path = await handlePhotoChange(file);
+        newEditingText.imagen = path;
+        //console.log("Imagen seleccionada: ", path);
+        //console.log("newEditingText.imagen: ", newEditingText.imagen);
       };
 
-      console.log("IMAGEN:   ", newEditingText.imagen);
+      //console.log("IMAGEN:   ", newEditingText.imagen);
     } else if (fieldNames === "estado") {
       const newVisibility = !visibility;
       newEditingText.estadoBanner = newVisibility;
       setVisibility(newVisibility);
-    } /*else if (fieldNames === "imagen") {
-      //console.log("Cambiar imagen");
-      document.getElementById("inputImagen").click();
-    } else if (fieldNames === "imagenDefault") {
-      console.log("imagen default");
-      newEditingText.imagen = defaultImagePath;
-      deletePreviousImage();
-      setPreviewPhoto(null);
-    }*/
+    } 
 
     // Enviar directamente los cambios al backend sin esperar a que React actualice el estado
     await handleSubmit(newEditingText);
@@ -204,6 +212,7 @@ export default function Page() {
     }
   }
 
+  // Función para enviar los cambios al backend
   const handleSubmit = async (data) => {
     try {
       const url = `${apiUrl}/api/landingInfo`;
@@ -219,15 +228,16 @@ export default function Page() {
         throw new Error("Network response was not ok");
       }
       const result = await response.json();
-      console.log("Data updated:", result);
+      //console.log("Data updated:", result);
       //setOriginalImagen(editingText.imagen);
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-  const handlePhotoChange = async (event) => {
-    const file = event.target.files[0];
+  // Función para manejar el cambio de la imagen
+  const handlePhotoChange = async (filepath) => {
+    const file = filepath;
 
     if (!file) {
       return;
@@ -235,93 +245,92 @@ export default function Page() {
 
     if (!file.type.startsWith("image/")) {
       setMessage("Warning", "Please select only one image file.", "");
-      event.target.value = "";
       return;
     }
 
-    let baseName = file.name.replace(/ /g, "_");
-    let filePath = `/Images/${baseName}`;
-    let count = 1;
-
-    // Verificación de existencia de archivo
-    while (await fileExists(filePath)) {
-      const nameParts = baseName.split(".");
-      const extension = nameParts.pop();
-      const newBaseName = `${nameParts.join(".")}(${count++}).${extension}`;
-      filePath = `/Images/${newBaseName}`;
-    }
-
-    const imageUrl = URL.createObjectURL(file);
-    setImagen(filePath); // Url de la imagen
-    setPreviewPhoto(imageUrl); // URL blob de la imagen
-    setEditingText({ ...editingText, imagen: filePath });
-
-    event.target.value = "";
-
-    handleSubmitImage(file);
-    /*let newEditingText = { ...editingText };
-    newEditingText.imagen = filePath;
-    console.log("Imagen añadida: ", newEditingText.imagen);
-
-    // Aquí pasa el archivo directamente, no solo la ruta
-    handleSubmitImage(file);
-    // Eliminar la imagen anterior antes de cambiarla
-    await handleSubmit(newEditingText);*/
-  };
-
-  // Función para verificar si un archivo existe
-  const fileExists = async (filePath) => {
-    try {
-      const response = await fetch(filePath, { method: "HEAD" });
-      return response.ok;
-    } catch (error) {
-      return false;
-    }
-  };
-
-  const handleSubmitImage = async (file) => {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('image', file);
+    formData.append('category', "landing")
 
-    console.log("Imagen a subir:", file.name);
-    deletePreviousImage();
-
-    try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
+    //const previewImage = URL.createObjectURL(file);
+    const path = "";
+    
+    try{
+      const response = await fetch(`${apiUrl}/api/multer/${formData.get("category")}`, {
+          method: 'POST',
+          body: formData,
       });
-
       if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+          throw new Error("Hubo un error al cargar el archivo.");
+        }
+      const path = await handleVerificarArchivo(formData);
+      const cleanPath = path.replace(/^(\.\.\/)/, '');
+      const parts = cleanPath.split("/");
+      const name = parts.slice(1).join("/");
+      console.log("¡Archivo cargado exitosamente!, path:", path);
+      return name;
+      setFoto(null);
+      } catch {
+          console.log("Error al subir la foto");
+      } 
 
-      const data = await response.json();
-      console.log("DATA:  ", data);
-      setOriginalImagen("/Images/" + file.name);
-      console.log("Imagen orige: ", originalImagene);
+  };
+
+    //Funcion que verifica si el archivo fue subido correctamente
+  const handleVerificarArchivo = async (formData) => {
+    const file = formData.get('image');
+
+    try{
+        const response = await fetch(`${apiUrl}/api/multer/file-exists`, {
+            method: "POST",
+            body: JSON.stringify({ file: file.name, category: formData.get("category") }),
+            headers: {
+              'Content-Type': 'application/json',  // Asegúrate de enviar los encabezados correctos
+            },
+        });
+        if(!response.ok){
+            throw new Error("Error al verificar el archivo");
+        }
+        const data = await response.json();
+        //console.log("data:", data);
+        return data.newFilePath;
     } catch (error) {
-      console.error("Error uploading file:", error);
+        console.log("Error al verificar el archivo");
+        return null;
     }
   };
 
-  const deletePreviousImage = async () => {
-    const imageNameToDelete = originalImagene.split("/").pop();
-    const encodedImageName = encodeURIComponent(imageNameToDelete);
-    console.log("Imagen a eliminar:", encodedImageName);
-    try {
-      const response = await fetch(`/api/upload?filename=${encodedImageName}`, {
-        method: "DELETE",
-      });
 
+  // Función para eliminar la imagen anterior (api upload)
+  const deletePreviousImage = async (path) => {
+    // Extraemos solo el nombre del archivo (sin la ruta completa)
+    const imageNameToDelete = path.split("/").pop();
+    
+    console.log("Imagen a eliminar:", imageNameToDelete); // Solo el nombre del archivo
+    
+    try {
+      // Llamamos a la API para eliminar el archivo, pasando solo el nombre del archivo
+      const response = await fetch(`${apiUrl}/api/multer/delete-file`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ filename: imageNameToDelete, categoria: "landing" }),
+      });
+  
+      // Verificamos si la respuesta es correcta
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+  
+      // Si la eliminación fue exitosa
+      console.log("Imagen eliminada con éxito.");
     } catch (error) {
-      //ALERTA DE ERROR
+      // Si hubo un error al intentar eliminar la imagen
       console.error("Error deleting file:", error);
     }
   };
+  
 
   return (
     <div className="min-h-screen flex flex-col items-center">
@@ -381,7 +390,7 @@ export default function Page() {
                 id="inputImagen"
                 style={{ display: "none" }} // Ocultamos el input de tipo file
                 accept="image/*"
-                onChange={handlePhotoChange} // Cuando seleccionen una imagen, manejarla
+                onChange={handleFileChange} // Cuando seleccionen una imagen, manejarla
               />
               <div
                 className="bg-primary flex justify-center items-center rounded-lg h-12 w-20 cursor-pointer"
@@ -411,7 +420,7 @@ export default function Page() {
               {(previwImage || editingText.imagen) && (
                 <div className="relative mt-4 w-[90%] h-52 bg-zinc-950 p-4 rounded-lg">
                   <img
-                    src={previwImage || editingText.imagen}
+                    src={previwImage || `${apiUrl}/public/landing/${editingText.imagen}`}
                     alt="Imagen seleccionada"
                     className="w-full h-full object-cover rounded-md"
                   />

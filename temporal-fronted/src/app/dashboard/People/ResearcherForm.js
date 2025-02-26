@@ -25,7 +25,7 @@ const ResearcherForm = ({
   setAlertMessage,
   setShowAlert,
 }) => {
-  const defaultImagePath = "/Images/profile_default.jpeg"; // Ruta de la imagen por defecto
+  const defaultImagePath = `profile_default.jpeg`; // Ruta de la imagen por defecto
   const [formData, setFormData] = useState({
     id: researcher?.id || "",
     name: researcher?.name_ || "",
@@ -37,7 +37,6 @@ const ResearcherForm = ({
     description: researcher?.description_ || "",
     photo: researcher?.photo || defaultImagePath, // Usar imagen por defecto
   });
-  const [photoFile, setPhotoFile] = useState(null);
   const [isPhotoDeleted, setIsPhotoDeleted] = useState(false); // Estado para marcar foto eliminada
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -47,6 +46,9 @@ const ResearcherForm = ({
   const [showDelete, setShowDelete] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
   const [current, setCurrent] = useState(null);
+
+  const [previwImage, setPreviewPhoto] = useState(null);
+  const [file, setFile] = useState(null);
 
   // Actualiza el estado cuando cambia el investigador
   useEffect(() => {
@@ -73,7 +75,7 @@ const ResearcherForm = ({
         description: researcher?.description_ || "",
         photo: researcher?.photo || defaultImagePath,
       });
-      setPhotoFile(null); // Restablecer el archivo de foto al editar
+      setFile(null); // Restablecer el archivo de foto al editar
     }
   }, [researcher]);
 
@@ -86,50 +88,77 @@ const ResearcherForm = ({
     }));
   };
 
-  // Función para manejar los cambios en la foto
-  const handlePhotoChange = async (event) => {
-    const file = event.target.files[0];
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    const previewImage = URL.createObjectURL(selectedFile);
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+    setPreviewPhoto(previewImage); // URL blob de la imagen
+  };
+
+  // Función para manejar el cambio de la imagen
+  const handlePhotoChange = async (filepath) => {
+    const file = filepath;
 
     if (!file) {
-      setError("");
       return;
     }
 
     if (!file.type.startsWith("image/")) {
-      setError("Please select only one image file.");
-      event.target.value = "";
+      setMessage("Warning", "Please select only one image file.", "");
       return;
-    } else {
-      setError("");
     }
 
-    let baseName = file.name.replace(/ /g, "_");
-    let filePath = `/Images/${baseName}`;
-    let count = 1;
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('category', "people")
 
-    // Verificación de existencia de archivo
-    while (await fileExists(filePath)) {
-      const nameParts = baseName.split(".");
-      const extension = nameParts.pop();
-      const newBaseName = `${nameParts.join(".")}(${count++}).${extension}`;
-      filePath = `/Images/${newBaseName}`;
-    }
+    //const previewImage = URL.createObjectURL(file);
+    const path = "";
+    
+    try{
+      const response = await fetch(`${apiUrl}/api/multer/${formData.get("category")}`, {
+          method: 'POST',
+          body: formData,
+      });
+      if (!response.ok) {
+          throw new Error("Hubo un error al cargar el archivo.");
+        }
+      const path = await handleVerificarArchivo(formData);
+      const cleanPath = path.replace(/^(\.\.\/)/, '');
+      const parts = cleanPath.split("/");
+      const name = parts.slice(1).join("/");
+      console.log("¡Archivo cargado exitosamente!, path:", path);
+      return name;
+      setFoto(null);
+      } catch {
+          console.log("Error al subir la foto");
+      } 
 
-    const imageUrl = URL.createObjectURL(file);
-    setFormData((prev) => ({
-      ...prev,
-      photo: filePath,
-    }));
-    setPhotoFile(file);
   };
 
-  // Función para verificar si un archivo existe
-  const fileExists = async (filePath) => {
-    try {
-      const response = await fetch(filePath, { method: "HEAD" });
-      return response.ok;
+  //Funcion que verifica si el archivo fue subido correctamente
+  const handleVerificarArchivo = async (formData) => {
+    const file = formData.get('image');
+
+    try{
+        const response = await fetch(`${apiUrl}/api/multer/file-exists`, {
+            method: "POST",
+            body: JSON.stringify({ file: file.name, category: formData.get("category") }),
+            headers: {
+              'Content-Type': 'application/json',  // Asegúrate de enviar los encabezados correctos
+            },
+        });
+        if(!response.ok){
+            throw new Error("Error al verificar el archivo");
+        }
+        const data = await response.json();
+        //console.log("data:", data);
+        return data.newFilePath;
     } catch (error) {
-      return false;
+        console.log("Error al verificar el archivo");
+        return null;
     }
   };
 
@@ -142,7 +171,7 @@ const ResearcherForm = ({
       originalPhoto: prev.photo, // Guardar la foto original que se eliminará
       photo: defaultImagePath, // Cambiar a la foto por defecto
     }));
-    setPhotoFile(null);
+    setFile(null);
   };
 
   // Función para enviar los datos del formulario a la BD
@@ -164,32 +193,15 @@ const ResearcherForm = ({
       setMessage("Role is required");
       return;
     }
-    const formDataToSend = new FormData();
-    if (photoFile) {
-      formDataToSend.append(
-        "file",
-        new File([photoFile], formData.photo.split("/").pop(), {
-          type: photoFile.type,
-        })
-      );
+
+
+    if(file){
+      const path = await handlePhotoChange(file);
+      dataToSend.photo = path;
+
     }
 
-    // Aquí realiza la subida de la foto si hay un nuevo archivo
-    try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formDataToSend,
-      });
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const data = await response.json();
-      //console.log(data);
-    } catch (error) {
-      //console.error("Error uploading file:", error);
-    }
 
     // Ahora verifica la eliminación
     if (isPhotoDeleted && originalProject.photo !== defaultImagePath) {
@@ -283,31 +295,41 @@ const ResearcherForm = ({
 
   // Funcion que eliminar una imagen de un investigador
   const handleDeleteImagen = async (personId) => {
+    
     if (personId.photo !== defaultImagePath) {
-      const imageNameToDelete = personId.photo.split("/").pop();
-      const encodedImageName = encodeURIComponent(imageNameToDelete);
-
+      console.log("imagen a eliminar: ", personId.photo);
       try {
-        const response = await fetch(
-          `/api/upload?filename=${encodedImageName}`,
-          {
-            method: "DELETE",
-          }
-        );
-
+        // Llamamos a la API para eliminar el archivo, pasando solo el nombre del archivo
+        const response = await fetch(`${apiUrl}/api/multer/delete-file`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ filename: personId.photo, categoria: "people" }),
+        });
+    
+        // Verificamos si la respuesta es correcta
         if (!response.ok) {
-          throw new Error("Error deleting image from server");
+          throw new Error("Network response was not ok");
         }
-        ////console.log("Imagen eliminada con éxito");
+    
+        // Si la eliminación fue exitosa
+        console.log("Imagen eliminada con éxito.");
       } catch (error) {
-        //console.error("Error deleting file:", error);
+        // Si hubo un error al intentar eliminar la imagen
+        console.error("Error deleting file:", error);
       }
+
+
+    }else{
+      console.log("No se puede eliminar la imagen por defecto");
     }
   };
 
   // Función para verificar si hay cambios
   const hasChanges = () => {
-    return JSON.stringify(formData) !== JSON.stringify(originalProject);
+
+    return JSON.stringify(formData) !== JSON.stringify(originalProject );
   };
 
   return (
@@ -391,10 +413,10 @@ const ResearcherForm = ({
       />
       {/* Photo Section */}
       <InputImage
-        handleImageUpload={handlePhotoChange}
+        handleImageUpload={handleFileChange}
         handleImageDelete={handleDeletePhoto}
         imagePreviews={
-          photoFile ? URL.createObjectURL(photoFile) : formData.photo
+          file ? previwImage : formData.photo
         }
         isResearcher={true}
       />{" "}

@@ -1,6 +1,7 @@
 import { IoIosArrowForward } from "react-icons/io";
 import ResearcherCard from "./ResearcherCard";
 import { useRef, useState, useEffect } from "react";
+const apiUrl = process.env.NEXT_PUBLIC_API;
 
 const ResearcherContainer = ({ title, json }) => {
   const scrollContainerRef = useRef(null);
@@ -76,7 +77,7 @@ const ResearcherContainer = ({ title, json }) => {
                 key={researcher.id}
                 name={researcher.name_}
                 institute={researcher.institute}
-                imagePath={researcher.photo}
+                imagePath={`${apiUrl}/public/people/${researcher.photo}`}
                 page={researcher.core_page}
               />
             ))

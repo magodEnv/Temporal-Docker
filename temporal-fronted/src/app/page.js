@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
-import Image from "next/image";
 import XCardNegro from "./components/Card/XCardNegro";
 import StudentCard from "./components/Card/StudentCard";
 import AlumniCard from "./components/Card/AlumniCard";

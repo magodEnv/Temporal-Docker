@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
+const apiUrl = process.env.NEXT_PUBLIC_API;
 
 const GaleriaImagenes = ({ params }) => {
   const path = params?.path;
@@ -20,7 +21,7 @@ const GaleriaImagenes = ({ params }) => {
       <div className="flex flex-1 w-full h-[16rem] items-center justify-center">
         <div className="relative w-full h-full">
           <Image
-            src={imagenActiva.url}
+            src={`${apiUrl}/public/projects/${imagenActiva.url}`}
             alt="Imagen del proyecto"
             className="object-contain"
             fill
@@ -32,7 +33,7 @@ const GaleriaImagenes = ({ params }) => {
           {images.map((img, index) => (
             <TarjetaImagen
               key={index}
-              src={img.url}
+              src={`${apiUrl}/public/projects/${img.url}`}
               activa={imagenActiva.url === img.url}
               onClick={() => setImagenActiva(img)}
             />

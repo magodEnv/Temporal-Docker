@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
 
 //init
 dotenv.config();
@@ -17,10 +18,12 @@ import imagenesRoutes from "./routes/imagen.routes.js";
 import mainProyetos from "./routes/mainProyectos.routes.js";
 import landingInfo from "./routes/landingInfo.routes.js";
 import twitter from "./routes/twitter.routes.js";
+import multerRoutes from "./routes/multer.routes.js";
 
 // Middlewares
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // Procesar datos de formularios
 
 // Configura CORS
 app.use(
@@ -39,6 +42,11 @@ app.use("/api/imagenes", imagenesRoutes);
 app.use("/api/mainProyectos", mainProyetos);
 app.use("/api/landingInfo", landingInfo);
 app.use("/api/twitter", twitter);
+app.use("/api/multer", multerRoutes);
+
+
+// Servir imágenes subidas de forma estática
+app.use("/public", express.static(path.resolve("public")));
 
 app.listen(PORT, () => {
   console.log(`Servidor backend escuchando en http://localhost:${PORT}`);

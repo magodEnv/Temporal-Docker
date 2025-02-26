@@ -26,6 +26,7 @@ const Proyectos = () => {
       }
       const data = await response.json();
       setProjectos(data.data);
+      console.log("Projects data:", data.data);
 
       /*    // Inicializar los índices de imágenes para cada proyecto
       const initialIndices = data.data.map(() => 0); // Inicializamos con 0 para cada proyecto

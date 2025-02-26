@@ -8,7 +8,7 @@ services:
     depends_on:
       - backend
     env_file:
-      - ./temporal-backend/.env
+      - ./temporal-fronted/.env
     networks:
       - app-network
 

@@ -1,3 +1,4 @@
+drop DATABASE IF EXISTS temporal;
 CREATE DATABASE IF NOT EXISTS temporal;
 USE temporal;
 
@@ -104,7 +105,7 @@ VALUES
 'Core Researcher', 
 'https://scholar.google.cl/citations?user=RNYDdjEAAAAJ&hl=en', 
 'Lorem ipsum dolor sit amet, consectet', 
-'/Images/CristobalNavarro.jpg'
+'CristobalNavarro.jpg'
 ),
 ('Hector Ferrada', 
 'Doctor', 
@@ -113,7 +114,7 @@ VALUES
 'Core Researcher', 
 'https://scholar.google.com/citations?user=VbE3-M8AAAAJ&hl=en', 
 'Mi principal motivación esta en el diseño y análisis de algoritmos genéricos con énfasis en uso de técnicas de HPC. ', 
-'/Images/HFerrada.jpeg'
+'HFerrada.jpeg'
 ),
 ('Nancy Hitchfeld', 
 'Doctor', 
@@ -122,7 +123,7 @@ VALUES
 'Core Researcher', 
 'https://scholar.google.cl/citations?user=dmafYYgAAAAJ&hl=en',
 'I am full professor at the Departamento de Ciencias de la Computación(DCC), Facultad de Ciencias Físicas y Matemáticas(FCFM), Universidad de Chile', 
-'/Images/NancyH.jpeg'
+'NancyH.jpeg'
 ),
 -- Research Assistant
 ('Felipe Quezada',
@@ -132,7 +133,7 @@ VALUES
 'Researcher Assistant',
 'https://github.com/kezada94', 
 '☕ MSc. in Computer Science 💻 Constantly thinking abt AI and HPC 🚀',
-'/Images/fquezada.jpg'
+'fquezada.jpg'
 ),
 -- Students
 ('Roberto Carrasco',
@@ -142,7 +143,7 @@ VALUES
 'Student',
 'temporal.cl', 
 'PhD Student at DCC, Uchile, Chile.',
-'/Images/rcarrasco.png'
+'rcarrasco.png'
 ),
 ('Rodrigo Stevenson',
 'Estudiante',
@@ -151,7 +152,7 @@ VALUES
 'Student',
 'temporal.cl', 
 'MSc student at MIN, UACh, Chile.',
-'/Images/rstevenson.png'
+'rstevenson.png'
 ),
 ('Enzo Meneses',
 'Estudiante',
@@ -160,7 +161,7 @@ VALUES
 'Student',
 'temporal.cl', 
 'MSc student at MIN, UACh, Chile.',
-'/Images/emeneses.png'
+'emeneses.png'
 ),
 ('Carlos Schoenfeldt',
 'Estudiante',
@@ -169,7 +170,7 @@ VALUES
 'Student',
 'temporal.cl', 
 'Undergrduate, UACh, Chile.',
-'/Images/cschoenfeldt.png'
+'cschoenfeldt.png'
 ),
 ('Francisco Carter',
 'Estudiante',
@@ -178,7 +179,7 @@ VALUES
 'Student',
 'temporal.cl', 
 'MSc student at DCC',
-'/Images/fcarter.jpg'
+'fcarter.jpg'
 ),
 -- Collaborator
 ('Ricardo Barrientos',
@@ -189,7 +190,7 @@ VALUES
 'https://www.ribarrie.cl/',
 'Actualmente cumplo con la Orientación Individual y también Grupal para formar parte de un claustro de
  Doctorado según el Comité de Área de Ciencias de Ingeniería y de la Tierra de la C.N.A.',
-'/Images/Ricardo_Barrientos.jpg'
+'Ricardo_Barrientos.jpg'
 ),
 ('Miguel Romero',
 'Doctor',
@@ -198,7 +199,7 @@ VALUES
 'Collaborator',
 'https://mromero.cl/',
 'Im broadly interested in algorithms, complexity and logic. Im also interested in data management and machine learning.',
-'/Images/mromero.jpg'
+'mromero.jpg'
 ),
 ('Benoit Crespin',
 'Doctor',
@@ -207,7 +208,7 @@ VALUES
 'Collaborator',
 'temporal.cl',
 'Collaborator from temporal',
-'/Images/bcrespin.png'
+'bcrespin.png'
 ),
 ('Benjamin Bustos',
 'Doctor',
@@ -216,7 +217,7 @@ VALUES
 'Collaborator',
 'https://users.dcc.uchile.cl/~bebustos/',
 'Collaborator from temporal',
-'/Images/collab-bbustos.png'
+'collab-bbustos.png'
 ),
 ('Mario Gonzalez',
 'Doctor',
@@ -225,7 +226,7 @@ VALUES
 'Collaborator',
 'https://www.acusticauach.cl/?page_id=572',
 'Collaborator from temporal',
-'/Images/collab-mgonzalez.png'
+'collab-mgonzalez.png'
 ),
 -- Alumni
 ('Eduardo Hopperdietzel',
@@ -235,7 +236,7 @@ VALUES
 'Alumni',
 'Temporal.cl',
 '[2023, Eng] Louvre Library for Composers',
-'/Images/profile_default.jpeg'
+'profile_default.jpeg'
 ),
 ('Diego Rojas',
 'Alumni',
@@ -244,7 +245,7 @@ VALUES
 'Alumni',
 'Temporal.cl',
 '[2022, Eng] Open Source Genetic Algorithm',
-'/Images/profile_default.jpeg'
+'profile_default.jpeg'
 ),
 ('Roberto Melita',
 'Alumni',
@@ -253,7 +254,7 @@ VALUES
 'Alumni',
 'Temporal.cl',
 '[2020, Eng] CA acceleration in GPU',
-'/Images/profile_default.jpeg'
+'profile_default.jpeg'
 ),
 ('Juan Chango',
 'Alumni',
@@ -262,7 +263,7 @@ VALUES
 'Alumni',
 'Temporal.cl',
 '[2020, MSc] GPU Sound Propagation.',
-'/Images/profile_default.jpeg'
+'profile_default.jpeg'
 ),
 ('Bruno Silva',
 'Alumni',
@@ -271,7 +272,7 @@ VALUES
 'Alumni',
 'Temporal.cl',
 '[2019, Eng] 3D University APP',
-'/Images/profile_default.jpeg'
+'profile_default.jpeg'
 ),
 ('Cesar Vargas',
 'Alumni',
@@ -280,7 +281,7 @@ VALUES
 'Alumni',
 'Temporal.cl',
 '[2018, Eng] Dynamic Path Tracing on GPU',
-'/Images/profile_default.jpeg'
+'profile_default.jpeg'
 ),
 ('Gabriel Gonzalez',
 'Alumni',
@@ -289,7 +290,7 @@ VALUES
 'Alumni',
 'Temporal.cl',
 '[2018, Eng] GPU Thread Mapping on Tetrahedrons',
-'/Images/profile_default.jpeg'
+'profile_default.jpeg'
 )
 ;
 
@@ -304,7 +305,7 @@ VALUES
 '2024-12-31', 
 'Finished',
 1221357,
-'/Images/fondecyt1221357.png' 
+'fondecyt1221357.png' 
 ),
 ('Patagón', 
 'Patagón: GPU-based Supercomputer', 
@@ -314,7 +315,7 @@ VALUES
 '2024-11-30',
 'Finished',
 666,
-'/Images/patagon.png' 
+'patagon.png' 
 ),
 ('Fondecyt 11180881', 
 'Exploiting GPU Tensor Cores for Non-Machine Learning Applications', 
@@ -324,7 +325,7 @@ VALUES
 '2024-11-30',
 'Finished', 
 11180881,
-'/Images/fondecyt11180881.png' 
+'fondecyt11180881.png' 
 ),
 ('Fondecyt 3160182', 
 'Efficient GPU Computing in Complex Particle-based Domains', 
@@ -334,17 +335,17 @@ VALUES
 '2024-11-30',
 'Finished',
 3160182,
-'/Images/fondecyt3160182.png' 
+'fondecyt3160182.png' 
 );
 
 
 
 INSERT INTO imagenes (proyecto_id, url) VALUES
-(1, '/Images/fondecyt1221357.png'), -- Fondecyt regular 1221357
-(2, '/Images/patagon.png'),-- Patagon
-(2, '/Images/Ey8WAoaWUAA1oF9.jpg'), -- Patagon
-(3, '/Images/fondecyt11180881.png'),-- Fondecyt 11180881
-(4, '/Images/fondecyt3160182.png')-- Fondecyt 3160182
+(1, 'fondecyt1221357.png'), -- Fondecyt regular 1221357
+(2, 'patagon.png'),-- Patagon
+(2, 'Ey8WAoaWUAA1oF9.jpg'), -- Patagon
+(3, 'fondecyt11180881.png'),-- Fondecyt 11180881
+(4, 'fondecyt3160182.png')-- Fondecyt 3160182
 ;
 
 

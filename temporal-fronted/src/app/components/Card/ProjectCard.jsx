@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 
 //images={project.imagenes[currentImageIndices[projectIndex]]?.url}
-
+const apiUrl = process.env.NEXT_PUBLIC_API;
 export default function ProjectCard({ project, mainImage }) {
   const [pathImage, setPathImage] = useState(mainImage);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -46,8 +45,8 @@ export default function ProjectCard({ project, mainImage }) {
       <Link href={`/Projects/${project.id}`} className="h-full w-full">
         <div className="relative cursor-pointer overflow-hidden h-40 m-3 rounded-xl">
           <div className="absolute inset-0 rounded-lg">
-            <Image
-              src={currentImageUrl}
+            <img
+              src={`${apiUrl}/public/projects/${currentImageUrl}`}
               fill={true}
               alt={`Project image ${project.title}`}
               className="object-contain z-10"

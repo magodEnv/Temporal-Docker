@@ -11,15 +11,14 @@ import InputBasic from "@/app/components/Forms/InputBasic";
 import InputDate from "@/app/components/Forms/InputDate";
 import InputTextArea from "@/app/components/Forms/InputTextArea";
 import InputSubElementos from "@/app/components/Forms/InputSubElementos";
-import InputImage from "@/app/components/Forms/InputImage";
+import InputMutipleImage from "@/app/components/Forms/InputMutipleImage";
 import TablaProjects from "@/app/components/table/TablaProjects";
 import InputMultipleSelection from "@/app/components/Forms/InputMultipleSelection";
 import InputSelection from "@/app/components/Forms/InputSelection";
-import { stringify } from "postcss";
 const apiUrl = process.env.NEXT_PUBLIC_API;
 
 const Proyectos = () => {
-  const defaultImagePath = "/Images/profile_default.jpeg"; // Ruta de la imagen por defecto
+  const defaultImagePath = "project_default.jpeg"; // Ruta de la imagen por defecto
 
   const [editingProject, setEditingProject] = useState(null); //Datos del proyecto a editar
   const [originalProject, setOriginalProject] = useState(null); //Datos originales del proyecto a editar
@@ -39,10 +38,10 @@ const Proyectos = () => {
   const [originalCoreResearcher, setOriginalCoreResearcher] = useState([]); //Guarda los investigadores principales originales de un proyecto
 
   //Imagenes
+  const [files, setFiles] = useState(null);
   const [imagesToDelete, setImagesToDelete] = useState([]); //Lista de imagenes a eliminar
   const [imagenes, setImagenes] = useState([]); //Lista de imagenes
   const [originalImagenes, setOriginalImagenes] = useState([]); //Lista de imagenes originales
-  const [BodyImagenes, setBodyImagenes] = useState([]); //Lista de imagenes a enviar
 
   //Preview Imagenes
   const [coreImagePreviews, setCoreImagePreviews] = useState([]); //url
@@ -57,6 +56,10 @@ const Proyectos = () => {
   const [alertMessage, setAlertMessage] = useState(["", ""]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [currentProyect, setCurrentProyect] = useState(null);
+
+  const [isLoading, setIsLoading] = useState(true); // Para controlar si estamos cargando los datos iniciales
+  const [submitComplete, setSubmitComplete] = useState(false); // Para verificar si se hizo un submit
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,15 +84,34 @@ const Proyectos = () => {
         setImagenes(imagenesData.data || defaultImagePath);
         setInvestigadoresExistentes(investigadoresData.data || []);
         setCurrentImageIndices(Array(proyectosData.data.length).fill(0));
+        setIsLoading(false);
       } catch (error) {
+        setIsLoading(false);
         //console.error("Error fetching data:", error);
       }
     };
 
-    fetchData();
-  }, []);
+    if (isLoading) {
+      fetchData();
+    }
+  }, [isLoading]);
  
-
+  useEffect(() => {
+    if (submitComplete) {
+      const fetchDataAfterSubmit = async () => {
+        try {
+          const updatedResponse = await fetch(`${apiUrl}/api/proyectos`);
+          const updatedData = await updatedResponse.json();
+          setProyectos(updatedData.data);
+        } catch (error) {
+          console.error("Error fetching updated data:", error);
+        }
+      };
+  
+      fetchDataAfterSubmit();
+      setSubmitComplete(false); // Resetear el estado para evitar que se ejecute más veces
+    }
+  }, [submitComplete]);
 
   /*
   //------------------------------- intervalo de imagenes -------------------------------------
@@ -225,116 +247,98 @@ const Proyectos = () => {
 
   //------------------------------------- Imagenes -------------------------------------
 
-  //Funcion que maneja la subida de imagenes
-  const handleImageUpload = (event) => {
-    const files = Array.from(event.target.files);
-    const newFileNames = [];
-    const newPreviews = [];
-    const newSelectedFiles = [];
-  
-    const invalidFiles = files.filter(
-      (file) => !file.type.startsWith("image/")
-    );
-    if (invalidFiles.length > 0) {
-      setError("Please select only image files.");
-      event.target.value = "";
+  const handleFilesChange = (event) => {
+    const selectedFiles = Array.from(event.target.files);
+    if (selectedFiles.length > 0) {
+      const filteredPreviews = imagePreviews.filter(preview => preview !== "project_default.jpeg");
+      const previews = selectedFiles.map(file => URL.createObjectURL(file));
+      const fileNames = selectedFiles.map(file => file.name);
+      setFiles(selectedFiles);
+      setCoreImagePreviews([...filteredPreviews, ...fileNames]);
+      setImagePreviews([...filteredPreviews, ...previews]);
+    }
+  };
+
+  // Función para manejar el cambio de la imagen
+  const handlePhotoChange = async (filepath) => {
+    const files = filepath;
+
+    if (!files) {
       return;
     }
-  
-    setError(""); // Limpiar error si todo es válido
-  
-    if (files.length === 0) {
-      setEditingProject((prev) => ({
-        ...prev,
-        imagenes: [...originalImagenes, defaultImagePath],
-        core_image: defaultImagePath,
-      }));
-      setImagePreviews((prev) => [...prev, defaultImagePath]);
-      setCoreImagePreviews((prev) => [...prev, defaultImagePath]);
+
+    if (files.some(file => !file.type.startsWith("image/"))) {
+      alert("Warning", "Please select only image files.", "");
       return;
     }
-  
-    // Filtrar imágenes que ya existan
-    const newImages = files.filter(
-      (file) =>
-        !originalImagenes.some(
-          (existingImage) => existingImage.url === `/Images/${file.name}`
-        )
-    );
-  
-    if (newImages.length === 0) {
-      return; // Si no hay imágenes nuevas, no hacer nada
-    }
-  
-    // Procesar imágenes nuevas
-    const promises = newImages.map(async (file) => {
-      let baseName = file.name.replace(/ /g, "_");
-      let filePath = `/Images/${baseName}`;
-      let count = 1;
-      let newBaseName = baseName;
-  
-      while (await fileExists(filePath)) {
-        const nameParts = baseName.split(".");
-        const extension = nameParts.pop();
-        newBaseName = `${nameParts.join(".")}(${count++}).${extension}`;
-        filePath = `/Images/${newBaseName}`;
-      }
-  
-      newFileNames.push(filePath);
-      newPreviews.push(URL.createObjectURL(file));  // Previsualización con URL.createObjectURL
-      newSelectedFiles.push(file);  // Archivos reales para la subida
-  
-  
-    });
-  
-    Promise.all(promises).then(() => {
-      setEditingProject((prev) => ({
-        ...prev,
-        imagenes: [
-          ...originalImagenes,
-          ...newFileNames.map((fileName) => ({ url: fileName })),
-        ],
-        core_image: newFileNames[0] || defaultImagePath,
-      }));
-  
-      setImagePreviews((prev) => [...prev, ...newPreviews]);
-      setCoreImagePreviews((prev) => [...prev, ...newFileNames]);
-      setBodyImagenes((prev) => [...prev, ...newFileNames]);
-      setSelectedFiles(newSelectedFiles);
-  
-      setpreviewImagenes((prev) => {
-        const newState = [...prev];
-        newState.push([newFileNames, newPreviews]);
-        return newState;
+
+    const formData = new FormData();
+    files.forEach((file) => formData.append("images", file));
+    formData.append('category', "projects");  
+
+    //const previewImage = URL.createObjectURL(file);
+    let path = [];
+    
+    try{
+      const response = await fetch(`${apiUrl}/api/multer/${formData.get("category")}`, {
+          method: 'POST',
+          body: formData,
       });
-      if (imagePreviews.length === 0) {
-        setCoreImagePreviews([defaultImagePath]);
-        setImagePreviews([defaultImagePath]);
-      } else {
-        // Si defaultImagePath está en setCoreImagePreviews, se elimina
-        setCoreImagePreviews((prev) =>
-          prev.filter((preview) => preview !== defaultImagePath)
-        );
-        setImagePreviews((prev) =>
-          prev.filter((preview) => preview !== defaultImagePath)
-        );
+      if (!response.ok) {
+          throw new Error("Hubo un error al cargar el archivo.");
+        }
+      path = await handleVerificarArchivo(formData);
+
+      //console.log("¡Archivo cargado exitosamente!, path:", path);
+      return path;
+      setFoto(null);
+      } catch {
+          console.log("Error al subir la foto");
+      } 
+
+  };
+ 
+  //Funcion que verifica si el archivo fue subido correctamente
+  const handleVerificarArchivo = async (formData) => {
+    const images = formData.getAll("images"); 
+    const category = "projects";
+    const paths = [];
+    for(let file of images){
+      
+      try{
+        
+        const response = await fetch(`${apiUrl}/api/multer/file-exists`, {
+          method: "POST",
+          body: JSON.stringify({ file: file.name, category }),
+          headers: {
+            'Content-Type': 'application/json',  
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Hubo un error al cargar el archivo.");
+        }
+
+        const data = await response.json();//contiene el path del archivo
+        //console.log("data Verifica: ", data); 
+        const cleanPath = data.newFilePath.replace(/^(\.\.\/)/, '');
+        const parts = cleanPath.split("/");
+        const name = parts.slice(1).join("/");
+
+         paths.push(name);
+        
+        //console.log("ruta: ", data.newFilePath)
+        
+      }catch(error){
+        return null;
       }
-    });
-  };
-  
-
-  //Funcion que verifica si un archivo (imagen) existe
-  const fileExists = async (filePath) => {
-    try {
-      const response = await fetch(filePath, { method: "HEAD" });
-      return response.ok;
-    } catch (error) {
-      return false;
     }
+    return paths;
   };
 
-  const handleImageDelete = (imageUrl, event) => {
-    event.stopPropagation();
+  // Función para manejar la eliminación de una imagen en la bd y front
+  const handleImageDelete  = async (imageUrl) => {
+    
 
     // Si la imagen es la predeterminada, no hacemos nada
     if (imageUrl === defaultImagePath) {
@@ -366,9 +370,6 @@ const Proyectos = () => {
         setCoreImagePreviews((prev) =>
           prev.filter((preview) => preview !== imagePreviewToRemove)
         );
-        setBodyImagenes((prev) =>
-          prev.filter((preview) => preview !== imagePreviewToRemove)
-        );
 
         break; // Salir del bucle una vez que se haya encontrado y eliminado la imagen
       }
@@ -387,20 +388,17 @@ const Proyectos = () => {
     };
 
     // Verificar si la URL de la imagen coincide con el patrón '/Images/*'
-    if (/^\/Images\/.+/.test(imageUrl)) {
+    if (/(\w+)(\(\d+\))?\.(\w+)/.test(imageUrl)) {
       setCoreImagePreviews((prev) =>
         prev.filter((preview) => preview !== imageUrl)
       );
-      setBodyImagenes((prev) => prev.filter((preview) => preview !== imageUrl));
     } else {
       const urlPreview = extractImageName(imageUrl);
       if (urlPreview) {
         setCoreImagePreviews((prev) =>
           prev.filter((preview) => preview !== urlPreview)
         );
-        setBodyImagenes((prev) =>
-          prev.filter((preview) => preview !== urlPreview)
-        );
+
       }
     }
 
@@ -418,6 +416,39 @@ const Proyectos = () => {
       setCoreImagePreviews([defaultImagePath]);
     }
   };
+  
+  //Funcion que maneja la eliminacion de una imagen en el servidor
+  const handleDeleteServerImagen = async (imageUrl) => {
+    if (imageUrl !== defaultImagePath) {
+      //console.log("imagen a eliminar: ", imageUrl);
+      try {
+        // Llamamos a la API para eliminar el archivo, pasando solo el nombre del archivo
+        const response = await fetch(`${apiUrl}/api/multer/delete-file`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ filename: imageUrl, categoria: "projects" }),
+        });
+    
+        // Verificamos si la respuesta es correcta
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+    
+        // Si la eliminación fue exitosa
+        //console.log("Imagen eliminada con éxito.");
+      } catch (error) {
+        // Si hubo un error al intentar eliminar la imagen
+        console.error("Error deleting file:", error);
+      }
+
+
+    }else{
+      console.log("No se puede eliminar la imagen por defecto");
+    }
+  };
+
 
   //------------------------------------- Solicitudes a la BD -------------------------------------
 
@@ -433,10 +464,7 @@ const Proyectos = () => {
       return;
     }
 
-    if (
-      editingProject.end_date !== "" &&
-      editingProject.start_date > editingProject.end_date
-    ) {
+    if (editingProject.end_date !== "" && editingProject.start_date > editingProject.end_date) {
       setAlertMessage(["Error", "The start date must be before the end date"]);
       setShowAlert(true);
       return;
@@ -451,50 +479,28 @@ const Proyectos = () => {
       return;
     }
 
+
     for (const imageUrl of imagesToDelete) {
-      const imageNameToDelete = imageUrl.split("/").pop();
-      const encodedImageName = encodeURIComponent(imageNameToDelete);
-      //console.log("Imagen a eliminar en syubmi:", imageUrl);
-      try {
-        const response = await fetch(
-          `/api/upload?filename=${encodedImageName}`,
-          {
-            method: "DELETE",
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-      } catch (error) {
-        setAlertMessage(["Error", "Failed to delete file"]);
-        setShowAlert(true);
-        //console.error("Error deleting file:", error);
-      }
+      //console.log("Imagen a eliminar: ", imageUrl);
+      await handleDeleteServerImagen(imageUrl);
     }
 
-    for (const file of selectedFiles) {
-      const formData = new FormData();
-      formData.append("file", file);
 
-      try {
-        const response = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
-        //////console.log(data);
-      } catch (error) {
-        setAlertMessage(["Error", "Failed to upload file"]);
-        setShowAlert(true);
-        //console.error("Error uploading file:", error);
-      }
+    let path = [];
+    if (!files || !files.length){
+      setEditingProject((prev) => ({
+        ...prev,
+        imagenes: [{ url: defaultImagePath }],
+        core_image: defaultImagePath,
+      }));
+    }else{
+      path = await handlePhotoChange(files);
+      //console.log("path del verificar: ", path);
+      
+      
     }
+
+
     // Si no se han seleccionado imágenes, asignamos la imagen por defecto
     //Este puede ser el problema, se hace la modificacion en el front pero no al momento de guardar
     if (editingProject.imagenes.length === 0) {
@@ -521,7 +527,7 @@ const Proyectos = () => {
           ...editingProject,
           investigadores: selectedResearcher,
           coreResearchers: coreResearchers,
-          imagenes: BodyImagenes,
+          imagenes: path,
           imagenes_eliminadas: imagesToDelete,
         }),
       });
@@ -542,17 +548,19 @@ const Proyectos = () => {
       setProyectos(updatedData.data);
       //setCurrentImageIndices(Array(updatedData.projects.length).fill(0));
       // Si la solicitud es exitosa:
+      path = [];
+      setSubmitComplete(true);
       setEditingProject(null);
       setImagePreviews(defaultImagePath);
       setCoreImagePreviews([]);
       setpreviewImagenes([]);
       setSelectCoreResearcher([]);
       setSelectedResearcher([]);
-      setBodyImagenes([]);
       setSelectedFiles([]);
       setImagesToDelete([]);
       setAlertMessage(["", "Project saved successfully"]);
       setShowAlert(true);
+      setFiles(null);
     } catch (error) {
       //console.error("Error in request: ", error);
       setAlertMessage([
@@ -569,32 +577,12 @@ const Proyectos = () => {
       // Elimina las imágenes del servidor
     
       const project = projects.find(project => project.id === id);
-      
-      // Si encontramos el proyecto, mostramos su título en el log
-      if(project.imagenes.length > 0){ 
-        //console.log("Deleting images of project:", project.title);
-        for(let i = 0; i < project.imagenes.length; i++){
-          const imageNameToDelete = project.imagenes[i].url.split("/").pop();
-          const encodedImageName = encodeURIComponent(imageNameToDelete);
-          try {
-            const response = await fetch(
-              `/api/upload?filename=${encodedImageName}`,
-              {
-                method: "DELETE",
-              }
-            );
-    
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
-          } catch (error) {
-            setAlertMessage(["Error", "Failed to delete file"]);
-            setShowAlert(true);
-            //console.error("Error deleting file:", error);
-          }
-
-        }
+      //console.log("Proyecto a eliminar: ", project);
+      for (const image of project.imagenes) {
+        //console.log("Imagen a eliminar: ", image.url); // Accedemos a la propiedad url de cada objeto
+        await handleDeleteServerImagen(image.url);
       }
+      
       
 
       //Elimina el proyecto de la base de datos
@@ -646,7 +634,6 @@ const Proyectos = () => {
     ////console.log("imagenes: " + JSON.stringify(editingProject));
     setSelectedResearcher("");
     setSelectCoreResearcher("");
-    setBodyImagenes([]);
     setOriginalImagenes([]);
     setImagePreviews([defaultImagePath]);
     setCoreImagePreviews([defaultImagePath]);
@@ -818,8 +805,8 @@ const Proyectos = () => {
             elementos={coreImagePreviews}
           />
 
-          <InputImage
-            handleImageUpload={handleImageUpload}
+          <InputMutipleImage
+            handleImageUpload={handleFilesChange}
             handleImageDelete={handleImageDelete}
             imagePreviews={imagePreviews}
             error={error}
@@ -852,6 +839,7 @@ const Proyectos = () => {
           cancel={() => setShowCancel(false)}
           confirm={() => {
             setEditingProject(null);
+            setImagesToDelete([]);
             setShowCancel(false);
           }}
           action="Yes"
