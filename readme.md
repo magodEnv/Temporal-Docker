@@ -1,4 +1,4 @@
-# 📘 README - Levantar el Proyecto Tempora con Docker  
+# 📘 Levantar el Proyecto Tempora con Docker  
 
 Este documento explica cómo levantar el proyecto **Tempora** utilizando **Docker** de manera sencilla y rápida.
 
