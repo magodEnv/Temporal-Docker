@@ -7,7 +7,7 @@ Este documento explica cómo levantar el proyecto **Tempora** utilizando **Docke
 ## 🚀 Requisitos Previos  
 Antes de comenzar, asegúrese de tener instalado en su sistema:  
 - **Docker** y **Docker Compose**  
-- Archivo **.env** correctamente configurado  
+- Archivo **.env** correctamente configurado
 
 ---
 
@@ -19,13 +19,17 @@ Antes de comenzar, asegúrese de tener instalado en su sistema:
    ```  
    Este directorio contiene el archivo `docker-compose.yml`, necesario para iniciar los contenedores.  
 
-2️⃣ **Levantar el proyecto con Docker**  
+2️⃣ **Levantar el proyecto con Docker en Linux**  
    ```bash
    sudo docker compose up -d
    ```  
    - La bandera `-d` indica que los contenedores se ejecutarán en segundo plano.  
    - Esto iniciará tanto el **frontend** como el **backend** de la página.  
 
+    **Levantar el proyecto con Docker en Windows**  
+   ```
+    docker compose up -d
+   ```
 ---
 
 ## 🔄 Limpieza de Imágenes y Volúmenes  
